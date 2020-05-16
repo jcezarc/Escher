@@ -1,0 +1,46 @@
+<div class="card mx-auto">
+	<div class="card-header">
+        Novo Livro
+    </div>
+    <div class="card-body">
+        <form [formGroup]="bookForm" novalidate> 
+
+            <div class="form-group">
+                <div class="form-group">
+                    <label>Id do Livro:</label>
+                    <input formControlName="book_id" type="text" class="form-control" placeholder="Id do Livro">
+                </div>
+            </div>
+
+            <div class="form-row">
+                  <div class="col">
+                      <label>Título:</label>
+                      <input formControlName="title" type="text" class="form-control" placeholder="Título">
+                  </div>
+                  <div class="col">
+                      <label>Autor:</label>
+                      <input formControlName="author" type="text" class="form-control" placeholder="Autor">                        
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Resumo</label>
+                <textarea class="form-control" formControlName="about" rows="3"></textarea>
+            </div>            
+
+            <div class=" form-group">
+                <button (click)="BookList.save(bookForm.value)" type="button" [disabled]="!bookForm.valid" 
+                class="btn btn-info btn-block">
+                  Gravar Livro
+                </button>
+            </div>
+    
+
+        </form>
+    </div>
+
+</div>
+
+<app-book-list
+#BookList
+></app-book-list>

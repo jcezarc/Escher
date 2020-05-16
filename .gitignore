@@ -1,0 +1,5 @@
+.vscode
+Teste.json
+__pycache__
+/Teste
+.pytest_cache

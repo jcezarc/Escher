@@ -1,0 +1,66 @@
+{
+    "tables": [
+        {
+            "table": "User",
+            "pk_field": "name",
+            "field_list": [
+                "gender",
+                "age",
+                "photo"
+            ],
+            "Angular":{
+                "title": "name",
+                "image": "photo",
+                "details":{
+                    "left": "gender",
+                    "right": "age"
+                }
+            }
+        },
+        {
+            "table": "Movie",
+            "pk_field": "name",
+            "field_list": [
+                "director"
+                "txSynopsis",
+                "genre",
+                "poster"
+            ],
+            "Angular": {
+                "title": "name",
+                "image": "poster",
+                "label": {
+                    "field": "genre",
+                    "value_set": {
+                        "green":"sci-fi",
+                        "red": "thriller",
+                        "yellow": "drama",
+                        "blue": "comedy"
+                    }
+                },
+                "details": {
+                    "left": "director",
+                    "right": "txSynopsis"
+                }
+            }
+        },
+        {
+            "table": "Review",
+            "pk_field": "idReview",
+            "field_list": [
+                "dtExhibition",
+                "vlRating",                
+            ],
+            "nested": [
+                "Viewer",
+                "Movie"
+            ]
+        }
+    ],
+    "db_type": "Neo4J",
+    "db_config": {
+        "user": "neo4j",
+        "host": "e-X45XUiH.gcp-neo4j-sandbox.com",
+        "password": "myPasswordXXX"
+    }
+}

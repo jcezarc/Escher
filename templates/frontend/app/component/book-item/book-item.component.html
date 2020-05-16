@@ -1,0 +1,25 @@
+<div class="card mt-4">
+    <div class="row">
+        <div class="col-4">    
+            <img [src]="book.imagePath" class="img-book" height="96" onerror="this.onerror=null;this.src='assets/img/books/sem_capa.png'">
+        </div>
+        <div class="col-6">
+            <h4>
+                {{book.title}}
+            </h4>
+        </div>
+        <ng-content></ng-content>
+    </div>
+    <div class="row">
+        <div class="col-4 mx-1">
+            <span class="text-muted small">
+                <strong>{{book.author}}</strong>
+            </span>
+        </div>
+        <div class="col-6 ml-1">
+            <span class="text-muted small">
+                {{book.about}}
+            </span>
+        </div>
+    </div>
+</div>
