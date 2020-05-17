@@ -1,0 +1,13 @@
+<div class="row">
+  <div *ngFor="let %table% of Navigator.view(items)" class="col-sm-6 col-xs-12">
+    <app-%table%-item [%table%]="%table%">
+          <app-delete-button (delete)="remove(%table%)">
+          </app-delete-button>
+    </app-%table%-item>
+  </div>
+</div>
+
+<app-navigator 
+  [maxItems]="4"
+  #Navigator
+></app-navigator>

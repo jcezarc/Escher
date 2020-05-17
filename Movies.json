@@ -38,10 +38,7 @@
                         "blue": "comedy"
                     }
                 },
-                "details": {
-                    "left": "director",
-                    "right": "txSynopsis"
-                }
+                "detail": "txSynopsis"
             }
         },
         {

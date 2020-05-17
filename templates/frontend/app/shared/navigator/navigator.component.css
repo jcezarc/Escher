@@ -1,0 +1,7 @@
+.btn-navegation{
+    max-width: 313%;
+}
+
+.btn.btn-primary:disabled{
+    background-color: #787b90;
+}

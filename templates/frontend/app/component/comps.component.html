@@ -1,0 +1,16 @@
+<section>
+  <h1>
+    %table%
+  </h1>
+</section>
+
+  <app-search-bar
+    (filter)="%table%List.filter($event)"
+    (add)="%table%List.add()"
+  ></app-search-bar>
+
+  <app-%table%-list
+    #%table%List
+  ></app-%table%-list>
+
+  
