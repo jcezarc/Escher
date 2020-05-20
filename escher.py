@@ -25,6 +25,13 @@ class BaseGenerator:
         dao = self.dao_info['import_dao_class']+'.py'
         return [i for i in db_list if i != dao]
 
+    def root_dir(self):
+        # FrontendGenerator => '.../frontend'
+        # BackendGenerator => '.../backend'
+        return os.path.join(
+            'templates',
+            self.__class__.__name__.lower()
+        )
 
     def __init__(self, json_info):
         self.tables = json_info['tables']
@@ -33,8 +40,9 @@ class BaseGenerator:
         db_config.update(
             json_info.get('db_config',{})
         )
-        self.db_config =db_config
+        self.db_config = db_config
         self.dao_info = aux
+        self.summary = {}
         
     def create_init_file(self, target):
         init_file = os.path.join(
@@ -48,7 +56,7 @@ class BaseGenerator:
     def render_code(self, params, read_only=False):
         path = params.pop('path', '')
         file_name = params.pop('file_name')
-        origin = os.path.join('templates', path, file_name)
+        origin = os.path.join(self.root_dir(), path, file_name[0])
         target = os.path.join(params["API_name"], path)
         if not os.path.exists(target):
             os.makedirs(target)
@@ -64,17 +72,17 @@ class BaseGenerator:
             ## ??????????????
             text = text.replace(f'%{key}%', value)
         if not read_only:
-            target = os.path.join(target, file_name)
+            target = os.path.join(target, file_name[-1])
             with open(target, 'w') as f:
                 f.write(text)
                 f.close()
         return text
 
-    def import_template(self, template_list):
-        pass
+    def template_list(self):
+        return []
 
     def copy_util(self, ref, ignore_list, sub='util'):
-        src = os.path.join('templates', sub)
+        src = os.path.join(self.root_dir(), sub)
         dst = os.path.join(ref, sub)
         if not os.path.exists(dst):
             os.makedirs(dst)
@@ -92,6 +100,16 @@ class BaseGenerator:
                 continue
             shutil.copy2(s, d)
 
+    def merge_info(self, file_name, table, symbol):
+        params = {
+            'file_name': [file_name],
+            'table': table
+        }
+        self.summary[symbol] = self.render_code(
+            params,
+            True
+        )
+
     def build_app(self):
-        pass
+        self.summary = {}
 

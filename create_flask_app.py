@@ -154,8 +154,6 @@ def exec_cmd():
     summary['is_SQL'] = str(is_sql)
     for info in tables:
         info['API_name'] = file_name
-        if 'pk_field' not in info:
-            info['pk_field'] = 'id'
         info['field_type'], info['default'] = field_type(info['pk_field'])
         print('*', end='')
         for template in ['config_routes', 'imports', 'swagger_details']:

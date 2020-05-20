@@ -1,6 +1,5 @@
 import logging
 from model.%table% import %table%Model
-from util.db.%import_dao_class% import %dao_class%
 from util.messages import (
     resp_erro,
     resp_not_found,
@@ -8,13 +7,14 @@ from util.messages import (
     resp_get_ok,
     resp_ok
 )
+from util.connection import get_table
 
 class %table%Service:
     def __init__(self, table=None):
         if table:
             self.table = table
         else:
-            self.table = %dao_class%(%table%Model, %extra%)
+            self.table = get_table()
 
     def find(self, params, %pk_field%=None):
         if %pk_field%:
