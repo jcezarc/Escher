@@ -76,32 +76,19 @@ class BaseGenerator:
 
     def template_list(self):
         return {
-            '':{
-                'app.module.ts': [
-                    (
-                        'importModule_List',
-                        'list.import.module.ts'
-                    ),
-                    (
-                        'Module_List',
-                        'list.module.ts'
-                    ),
-                    (
-                        'Service_List',
-                        'list.service.ts'
-                    )
-                ],
-                'app.routes.ts': [
-                    (
-                        'Routes_List',
-                        'list.routes.ts'
-                    ),
-                    (
-                        'import_List',
-                        'list.import.ts'
-                    )
-                ]
-            },
+            '':[
+                ('app.module.ts',{
+                    'importModule_List':'list.import.module.ts'
+                    ,
+                    'Module_List':'list.module.ts'
+                    ,
+                    'Service_List':'list.service.ts'
+                }),
+                ('app.routes.ts',{
+                    'Routes_List':'list.routes.ts',
+                    'import_List':'list.import.ts'
+                })
+            ],
             'component': {
                 'comp-item': [
                     'comp-item.component.css',
@@ -118,14 +105,9 @@ class BaseGenerator:
                 ]
             },
             'header': [
-                {
-                    'header.component.html':[
-                        (
-                            'Link_List',
-                            'list.link.html'
-                        )
-                    ]
-                },
+                ('header.component.html',{
+                    'Link_List':'list.link.html'
+                }),
                 'header.component.ts'
             ]
         }
@@ -149,22 +131,15 @@ class BaseGenerator:
                 continue
             shutil.copy2(s, d)
 
-    def merge_files(self, root, params):
-        is_dict = isinstance(params, dict)
-        is_list = isinstance(params, list)
-        file_name = ''
+    def merge_files(self, root, info):
+        params = info[1]
         for key in params:
-            if is_dict:
-                file_name = key
-                self.merge_files(root, params[key])
-            elif is_list:
-                symbol = key[0]
-                value = self.render_code(
-                    path=root,
-                    file_name=key[1]
-                )
-                self.summary[symbol] = value
-        return file_name
+            self.summary[key] = self.render_code(
+                file_name=params[key],
+                path=root,
+                read_only=True
+            )
+        return info[0]
 
     def build_app(self, params, table, root=''):
         is_dict = isinstance(params, dict)
@@ -177,8 +152,11 @@ class BaseGenerator:
                     os.path.join(root, key)
                 )
             elif is_list:
-                if isinstance(key, dict):
-                    file_name = self.merge_files(root, key)
+                if isinstance(key, tuple):
+                    file_name = self.merge_files(
+                        root,
+                        key
+                    )
                 else:
                     file_name = [
                         key,

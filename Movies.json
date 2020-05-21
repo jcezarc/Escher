@@ -11,9 +11,15 @@
             "Angular":{
                 "title": "name",
                 "image": "photo",
-                "details":{
-                    "left": "gender",
-                    "right": "age"
+                "details": "gender",
+                "label": {
+                    "field": "age",
+                    "value_set":{
+                        "green": "0-15",
+                        "red": "16-29",
+                        "yellow": "30-50",
+                        "blue": "51 >"
+                    }
                 }
             }
         },
@@ -21,7 +27,7 @@
             "table": "Movie",
             "pk_field": "name",
             "field_list": [
-                "director"
+                "director",
                 "txSynopsis",
                 "genre",
                 "poster"
