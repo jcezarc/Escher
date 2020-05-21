@@ -12,6 +12,7 @@ class BaseGenerator:
         3 - Ler templates e substituir marcas pelas configurações
             >> 3.1 - Identificar quais arquivos temporários usar em cada pasta;
             3.2 - Completar nomes de arquivos com nomes de tabelas
+            3.3 - Relacionar tabelas NESTED
         4 - Salvar os arquivos nas pastas corretas
             4.1 - Se a pasta não existir, criar
                 4.1.1 - Em pastas vazias existem arquivos obrigatórios?
@@ -53,9 +54,7 @@ class BaseGenerator:
             f.write(' ')
             f.close()
 
-    def render_code(self, params, read_only=False):
-        path = params.pop('path', '')
-        file_name = params.pop('file_name')
+    def render_code(self, path, file_name, read_only=False):
         origin = os.path.join(self.root_dir(), path, file_name[0])
         target = os.path.join(params["API_name"], path)
         if not os.path.exists(target):
@@ -79,7 +78,23 @@ class BaseGenerator:
         return text
 
     def template_list(self):
-        return []
+        return {
+            'component': {
+                'comp-item': [
+                    'comp-item.component.css',
+                    'comp-item.component.html',
+                    'comp-item.component.ts',
+                ],
+                'comp-list': [
+                    'comp-list.component.html',
+                    'comp-list.component.ts',
+                ],
+                'new-comp': [
+                    'new-comp.component.html',
+                    'new-comp.component.ts'
+                ]
+            }
+        }
 
     def copy_util(self, ref, ignore_list, sub='util'):
         src = os.path.join(self.root_dir(), sub)
@@ -110,6 +125,20 @@ class BaseGenerator:
             True
         )
 
-    def build_app(self):
-        self.summary = {}
-
+    def build_app(self, params, root=''):
+        # self.summary = {}
+        is_dict = isinstance(params, dict)
+        is_list = isinstance(params, list)
+        for key in params:
+            if is_dict:
+                self.build_app(
+                    params[key],
+                    os.path.join(root, key)
+                )
+            elif is_list:
+                self.render_code(
+                    path=root,
+                    file_name=key
+                )
+    def exec(self):
+        self.build_app(self.template_list())
