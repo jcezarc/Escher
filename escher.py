@@ -4,6 +4,18 @@ import json
 import shutil
 from db_defaults import default_params
 
+JSON_KEYS = [
+    'table',
+    'pk_field',
+    'field_list',
+    'nested', #--- ???
+]
+ANGULAR_KEYS = [
+    'title',
+    'image',
+    'detail'
+]
+
 class BaseGenerator:
     """    
         1 - Ler JSON
@@ -173,11 +185,12 @@ class BaseGenerator:
         return text.replace('comp-', table)
 
     def extract_table_info(self, obj):
-        pass
+        for key in :
+
 
     def exec(self):
-        self.summary = {}
         for table in self.tables:
+            self.summary = {}
             table_name = self.extract_table_info(table)
             self.build_app(
                 self.template_list(), 
