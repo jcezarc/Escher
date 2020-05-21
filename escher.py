@@ -115,17 +115,35 @@ class BaseGenerator:
                 continue
             shutil.copy2(s, d)
 
-    def merge_info(self, file_name, table, symbol):
-        params = {
-            'file_name': [file_name],
-            'table': table
+    def merge_files(self, main_file):
+        return {
+            'app.module.ts': [
+                (
+                    'importModule_List',
+                    'list.import.module.ts'
+                ),
+                (
+                    'Module_List',
+                    'list.module.ts'
+                ),
+                (
+                    'Service_List',
+                    'list.service.ts'
+                )
+            ],
+            'app.routes.ts': [
+                (
+                    'Routes_List',
+                    'list.routes.ts'
+                ),
+                (
+                    'import_List',
+                    'list.import.ts'
+                )
+            ]
         }
-        self.summary[symbol] = self.render_code(
-            params,
-            True
-        )
 
-    def build_app(self, params, root=''):
+    def build_app(self, params, table, root=''):
         # self.summary = {}
         is_dict = isinstance(params, dict)
         is_list = isinstance(params, list)
@@ -133,12 +151,23 @@ class BaseGenerator:
             if is_dict:
                 self.build_app(
                     params[key],
+                    table,
                     os.path.join(root, key)
                 )
             elif is_list:
                 self.render_code(
                     path=root,
-                    file_name=key
+                    file_name=[
+                        key,
+                        self.rename(key, table)
+                    ]
                 )
+
+    def rename(self, text, table):
+        if 'new-' in text:
+            return text.replace('new-', table)
+        return text.replace('comp-', table)
+
     def exec(self):
-        self.build_app(self.template_list())
+        for table in self.tables:
+            self.build_app(self.template_list(), table)
