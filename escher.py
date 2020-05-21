@@ -54,7 +54,8 @@ class BaseGenerator:
             f.write(' ')
             f.close()
 
-    def render_code(self, path, file_name, read_only=False):
+    def render_code(self, file_name, path='', read_only=False):
+        params = self.summary
         origin = os.path.join(self.root_dir(), path, file_name[0])
         target = os.path.join(params["API_name"], path)
         if not os.path.exists(target):
@@ -65,10 +66,6 @@ class BaseGenerator:
             f.close()
         for key in params:
             value = params[key]
-            ## ??????????????
-            if not isinstance(value, str):
-                continue 
-            ## ??????????????
             text = text.replace(f'%{key}%', value)
         if not read_only:
             target = os.path.join(target, file_name[-1])
@@ -79,6 +76,32 @@ class BaseGenerator:
 
     def template_list(self):
         return {
+            '':{
+                'app.module.ts': [
+                    (
+                        'importModule_List',
+                        'list.import.module.ts'
+                    ),
+                    (
+                        'Module_List',
+                        'list.module.ts'
+                    ),
+                    (
+                        'Service_List',
+                        'list.service.ts'
+                    )
+                ],
+                'app.routes.ts': [
+                    (
+                        'Routes_List',
+                        'list.routes.ts'
+                    ),
+                    (
+                        'import_List',
+                        'list.import.ts'
+                    )
+                ]
+            },
             'component': {
                 'comp-item': [
                     'comp-item.component.css',
@@ -93,7 +116,18 @@ class BaseGenerator:
                     'new-comp.component.html',
                     'new-comp.component.ts'
                 ]
-            }
+            },
+            'header': [
+                {
+                    'header.component.html':[
+                        (
+                            'Link_List',
+                            'list.link.html'
+                        )
+                    ]
+                },
+                'header.component.ts'
+            ]
         }
 
     def copy_util(self, ref, ignore_list, sub='util'):
@@ -115,36 +149,24 @@ class BaseGenerator:
                 continue
             shutil.copy2(s, d)
 
-    def merge_files(self, main_file):
-        return {
-            'app.module.ts': [
-                (
-                    'importModule_List',
-                    'list.import.module.ts'
-                ),
-                (
-                    'Module_List',
-                    'list.module.ts'
-                ),
-                (
-                    'Service_List',
-                    'list.service.ts'
+    def merge_files(self, root, params):
+        is_dict = isinstance(params, dict)
+        is_list = isinstance(params, list)
+        file_name = ''
+        for key in params:
+            if is_dict:
+                file_name = key
+                self.merge_files(root, params[key])
+            elif is_list:
+                symbol = key[0]
+                value = self.render_code(
+                    path=root,
+                    file_name=key[1]
                 )
-            ],
-            'app.routes.ts': [
-                (
-                    'Routes_List',
-                    'list.routes.ts'
-                ),
-                (
-                    'import_List',
-                    'list.import.ts'
-                )
-            ]
-        }
+                self.summary[symbol] = value
+        return file_name
 
     def build_app(self, params, table, root=''):
-        # self.summary = {}
         is_dict = isinstance(params, dict)
         is_list = isinstance(params, list)
         for key in params:
@@ -155,12 +177,16 @@ class BaseGenerator:
                     os.path.join(root, key)
                 )
             elif is_list:
-                self.render_code(
-                    path=root,
-                    file_name=[
+                if isinstance(key, dict):
+                    file_name = self.merge_files(root, key)
+                else:
+                    file_name = [
                         key,
                         self.rename(key, table)
                     ]
+                self.render_code(
+                    path=root,
+                    file_name=file_name
                 )
 
     def rename(self, text, table):
@@ -168,6 +194,14 @@ class BaseGenerator:
             return text.replace('new-', table)
         return text.replace('comp-', table)
 
+    def extract_table_info(self, obj):
+        pass
+
     def exec(self):
+        self.summary = {}
         for table in self.tables:
-            self.build_app(self.template_list(), table)
+            table_name = self.extract_table_info(table)
+            self.build_app(
+                self.template_list(), 
+                table_name
+            )
