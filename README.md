@@ -1,13 +1,12 @@
-# Create-Flask-App
+# Escher
 
-###### First of all, I'm sorry because I don't speak English - So this text is an effort by me and the Google translator so that you can understand a little of this tool. ;)
 
-## What is the *"Create-Flask-App"* and what is it for?
-**Create-Flask-App** is a command line tool that lays the foundation for your APP
+## What is the *"Escher"* and what is it for?
+**Escher** is a command line tool that lays the foundation for your APP
 
 How to use:
 
-> `python create_flask_app.py <JSON file>`
+> `python Escher.py <JSON file>`
 
 ## What I need?
 * JSON file
@@ -19,23 +18,8 @@ How to use:
     - `db_type`: Supported types are: DynamoDB, MongoDB, Neo4J, Postgres and SqlServer
     - `db_config`: Configuration information specific to your database (such as user, password...) - If in doubt, use the parameter "-\<database name>" on the command line
     ```
-        python create_flask_app.py -dynamoDB
+        python Escher.py -dynamoDB
     ```
-
-    *Examples of JSON files:*
-    * There are 4 sample files that come with Create-Flask-App:
-
-        | Json file   | Database |
-        |------------:|:---------|
-        | Class.json  | Neo4J    |
-        | Coffee.json | MongoDB  |
-        | Movies.json | DynamoDB |
-        | Shop.json   | Postgres |
-
-        
-        > Feel free to modify any of them for your personal use.
-
-
 
 * Requirements: 
 
@@ -48,7 +32,7 @@ How to use:
 
 ## What is produced?
 
-After running Create-Flask-App with a valid JSON file, a folder with the same name as that file will be created.
+After running Escher with a valid JSON file, a folder with the same name as that file will be created.
 Inside, you will find:
 
 * The `model` folder with the definitions of a table and its fields
@@ -68,6 +52,11 @@ When running the generated APP, you can access the swagger documentation in the 
 
 
 Thank you for testing this tool. I hope it helps you with your projects!
+
+
+## Angular pages
+((((under development))))
+
 ===
 
 Julio Cascalles
