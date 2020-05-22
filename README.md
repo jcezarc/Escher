@@ -51,13 +51,14 @@ When running the generated APP, you can access the swagger documentation in the 
 * You can also customize how swagger handles your APP details, in the `swagger_details` function of app.py.
 
 
-Thank you for testing this tool. I hope it helps you with your projects!
-
 
 ## Angular pages
 ((((under development))))
 
 ===
+
+Thank you for testing this tool. I hope it helps you with your projects!
+
 
 Julio Cascalles
 ---
