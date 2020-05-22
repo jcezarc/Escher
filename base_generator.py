@@ -8,7 +8,7 @@ JSON_KEYS = [
     'table',
     'pk_field',
     'field_list',
-    'nested', #--- ???
+    'nested',
 ]
 ANGULAR_KEYS = [
     'title',
@@ -78,6 +78,8 @@ class BaseGenerator:
         has_fields = main_file[:10] == ID_FIELD_LIST
         if field_list and has_fields:
             result = ''
+            # ----- Transformar em função
+            # ----- para usar com NESTED!
             for field in field_list:
                 if field == params['pk_field']:
                     attr = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
@@ -94,6 +96,7 @@ class BaseGenerator:
                     attr
                 )
             text = result
+            # -------------------------------
         for key in params:
             value = params[key]
             text = text.replace(f'%{key}%', value)

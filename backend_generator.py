@@ -57,7 +57,10 @@ class BackendGenerator(BaseGenerator):
                 'all_res.py',
                 'res_by_id.py'
             ],
-            'service': ['service.py'],
+            'service': [
+                'service.py',
+                'db_connection.py'
+            ],
             'tests': ['testes.py']
         }
 
@@ -70,8 +73,29 @@ class BackendGenerator(BaseGenerator):
         elif '_res' in text:
             return text.replace('_res', '_'+table)
 
+    def formated_json_config(self):
+        def indentation(num_tabs):
+            return '\t' * num_tabs
+        result = '{'
+        for key in self.db_config:
+            value = self.db_config[key]
+            result += '\n{}"{}": "{}",'.format(
+                indentation(4),
+                key,
+                value
+            )
+        result += '\n{}{}'.format(
+            indentation(3),
+            '}'
+        )
+        return result
+
     def extract_table_info(self, obj):
+        IMP_DAO = 'import_dao_class'
+        DAO_CLS = 'dao_class'
         result = super().extract_table_info(obj)
         self.summary['is_SQL'] = str(self.is_sql)
-        self.summary['extra'] = str(self.db_config)
+        self.summary['extra'] = self.formated_json_config()
+        self.summary[IMP_DAO] = self.dao_info[IMP_DAO]
+        self.summary[DAO_CLS] = self.dao_info[DAO_CLS]
         return result
