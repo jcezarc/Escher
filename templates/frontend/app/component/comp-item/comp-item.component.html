@@ -12,10 +12,22 @@
     </div>
     <div class="row">
         <div class="col-4 mx-1">
-            <span class="text-muted small">
+            <!-- <span class="text-muted small">
                 <strong>{{%table%.%label%}}</strong>
+            </span> -->
+            <span *ngIf="%table%.%label% == %yellow%" class="badge badge-warning">
+                VIP
             </span>
-        </div>
+            <span *ngIf="%table%.%label% == %red%" class="badge badge-danger">
+                Admin
+            </span>
+            <span *ngIf="%table%.%label% == %green%" class="badge badge-success">
+                Básico
+            </span>
+            <span *ngIf="%table%.%label% == %blue%" class="badge badge-info">
+              Eventual
+            </span>
+         </div>
         <div class="col-6 ml-1">
             <span class="text-muted small">
                 {{%table%.%detail%}}

@@ -2,12 +2,12 @@
     "tables": [
         {
             "table": "User",
-            "pk_field": "name",
-            "field_list": [
-                "gender",
-                "age",
-                "photo"
-            ],
+            "pk_field": ["name", "str"],
+            "field_list": {
+                "gender": "str",
+                "age": "int",
+                "photo": "str"
+            },
             "Angular":{
                 "title": "name",
                 "image": "photo",
@@ -26,12 +26,12 @@
         {
             "table": "Movie",
             "pk_field": "name",
-            "field_list": [
-                "director",
-                "txSynopsis",
-                "genre",
-                "poster"
-            ],
+            "field_list": {
+                "director": "str",
+                "txSynopsis": "str",
+                "genre": "str",
+                "poster": "str"
+            },
             "Angular": {
                 "title": "name",
                 "image": "poster",
