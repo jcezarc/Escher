@@ -55,7 +55,7 @@ When running the generated APP, you can access the swagger documentation in the 
 ## Angular pages
 ((((under development))))
 
-===
+---
 
 Thank you for testing this tool. I hope it helps you with your projects!
 
