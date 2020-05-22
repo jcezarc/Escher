@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import shutil
+from json.decoder import JSONDecodeError
 
 JSON_KEYS = [
     'table',
@@ -24,13 +25,21 @@ class BaseGenerator:
     def __init__(self, file_name):
         file_name = os.path.splitext(file_name)[0]
         if self.api_name != file_name:
-            with open(file_name+'.json', 'r') as f:
-                text = f.read()
-                f.close()
-            self.json_info = json.loads(text)
+            try:
+                self.load_json(file_name)
+            except JSONDecodeError:
+                self.json_info = None
+                print('\n\n*** Invalid JSON file! ***\n')
+                return
             self.api_name = file_name
         self.tables = self.json_info['tables']
         self.summary = {}
+
+    def load_json(self, file_name):
+        with open(file_name+'.json', 'r') as f:
+            text = f.read()
+            f.close()
+        self.json_info = json.loads(text)
 
     def ignore_list(self):
         return []
@@ -68,6 +77,7 @@ class BaseGenerator:
             with open(target, 'w') as f:
                 f.write(text)
                 f.close()
+        print('.', end='')
         return text
 
     def template_list(self):
@@ -140,6 +150,8 @@ class BaseGenerator:
         return obj['table']
 
     def exec(self):
+        if self.json_info is None:
+            return
         for table in self.tables:
             self.summary = {}
             table_name = self.extract_table_info(table)

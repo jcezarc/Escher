@@ -5,6 +5,8 @@ class BackendGenerator(BaseGenerator):
 
     def __init__(self, file_name):
         super().__init__(file_name)
+        if self.json_info is None:
+            return
         db_type = self.json_info['db_type']
         db_config, aux = default_params(db_type)
         db_config.update(
