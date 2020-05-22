@@ -30,6 +30,14 @@ class BackendGenerator(BaseGenerator):
             f.write(' ')
             f.close()
 
+    def field_type(self, value):
+        return {
+            'str': 'Str',
+            'int': 'Integer',
+            'date': 'Date',
+            'float': 'Float'
+        }[value]
+
     def template_list(self):
         return {
             '':[
@@ -39,7 +47,12 @@ class BackendGenerator(BaseGenerator):
                     'swagger_details': 'swagger_details.py',
                 }),
             ],
-            'model': ['model.py'],
+            'model': (
+                'model.py',
+                {
+                    'fieldList': 'field_list.py'
+                }
+            ),
             'resource':[
                 'all_res.py',
                 'res_by_id.py'

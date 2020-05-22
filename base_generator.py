@@ -55,12 +55,17 @@ class BaseGenerator:
     def create_empty_dir(self, target):
         pass
 
+    def field_type(self, value):
+        pass
+
     def render_code(self, file_name, path='', read_only=False):
         params = self.summary
+        ID_FIELD_LIST = 'field_list'
+        main_file = file_name[0]
         origin = os.path.join(
             self.root_dir(),
             path,
-            file_name[0]
+            main_file
         )
         target = os.path.join(self.api_name, path)
         if not os.path.exists(target):
@@ -69,13 +74,33 @@ class BaseGenerator:
         with open(origin, 'r') as f:
             text = f.read()
             f.close()
+        field_list = params.pop(ID_FIELD_LIST, None)
+        has_fields = main_file[:10] == ID_FIELD_LIST
+        if field_list and has_fields:
+            result = ''
+            for field in field_list:
+                if field == params['pk_field']:
+                    attr = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
+                else:
+                    attr = ''
+                result += text.replace(
+                    '%field_name%',
+                    field
+                ).replace(
+                    '%field_type%',
+                    self.field_type(field_list[field])
+                ).replace(
+                    '%attributes%',
+                    attr
+                )
+            text = result
         for key in params:
             value = params[key]
             text = text.replace(f'%{key}%', value)
         if not read_only:
             target = os.path.join(target, file_name[-1])
             with open(target, 'w') as f:
-                f.write(text)
+                f.write(result)
                 f.close()
         print('.', end='')
         return text
@@ -108,32 +133,32 @@ class BaseGenerator:
         params = info[1]
         for key in params:
             self.summary[key] = self.render_code(
-                file_name=params[key],
+                file_name=[params[key]],
                 path=root,
                 read_only=True
             )
-        return info[0]
+        return [info[0]]
 
     def build_app(self, params, table, root=''):
         is_dict = isinstance(params, dict)
         is_list = isinstance(params, list)
-        for key in params:
+        for item in params:
             if is_dict:
                 self.build_app(
-                    params[key],
+                    params[item],
                     table,
-                    os.path.join(root, key)
+                    os.path.join(root, item)
                 )
             elif is_list:
-                if isinstance(key, tuple):
+                if isinstance(item, tuple):
                     file_name = self.merge_files(
                         root,
-                        key
+                        item
                     )
                 else:
                     file_name = [
-                        key,
-                        self.rename(key, table)
+                        item,
+                        self.rename(item, table)
                     ]
                 self.render_code(
                     path=root,

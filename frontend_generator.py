@@ -2,6 +2,15 @@ from base_generator import BaseGenerator
 
 class FrontendGenerator(BaseGenerator):
 
+    def field_type(self, value):
+        return {
+            'str': 'string',
+            'int': 'int',
+            'date': 'string', #-- new Date() ??
+            'float': 'number'
+        }[value]
+
+
     def template_list(self):
         return {
             '':[
@@ -33,6 +42,17 @@ class FrontendGenerator(BaseGenerator):
                 'new-comp': [
                     'new-comp.component.html',
                     'new-comp.component.ts'
+                ],
+                '': [
+                    (
+                        'comp.model.ts',
+                        {
+                            'fieldList': 'field_list.comp.ts'
+                        }
+                    ),
+                    'comp.service.ts',
+                    'comp.component.html',
+                    'comp.component.ts'
                 ]
             },
             'header': [
@@ -53,7 +73,10 @@ class FrontendGenerator(BaseGenerator):
         angular_data = obj.get('Angular')
         if angular_data:
             for key in ANGULAR_KEYS:
-                self.summary = obj[key]
+                self.summary = obj.get(key, '')
+            label_colors = angular_data.get('label-colors',{})
+            for color in label_colors:
+                self.summary[color] = label_colors[color]
         return result
 
     def util_folder():

@@ -2,8 +2,9 @@
     "tables": [
         {
             "table": "User",
-            "pk_field": ["name", "str"],
+            "pk_field": "name",
             "field_list": {
+                "name": "str",
                 "gender": "str",
                 "age": "int",
                 "photo": "str"
@@ -11,22 +12,15 @@
             "Angular":{
                 "title": "name",
                 "image": "photo",
-                "details": "gender",
-                "label": {
-                    "field": "age",
-                    "value_set":{
-                        "green": "0-15",
-                        "red": "16-29",
-                        "yellow": "30-50",
-                        "blue": "51 >"
-                    }
-                }
+                "label": "age",
+                "detail": "gender"
             }
         },
         {
             "table": "Movie",
             "pk_field": "name",
             "field_list": {
+                "name": "str",
                 "director": "str",
                 "txSynopsis": "str",
                 "genre": "str",
@@ -35,14 +29,12 @@
             "Angular": {
                 "title": "name",
                 "image": "poster",
-                "label": {
-                    "field": "genre",
-                    "value_set": {
-                        "green":"sci-fi",
-                        "red": "thriller",
-                        "yellow": "drama",
-                        "blue": "comedy"
-                    }
+                "label": "genre",
+                "label-colors": {
+                    "green":"sci-fi",
+                    "red": "thriller",
+                    "yellow": "drama",
+                    "blue": "comedy"
                 },
                 "detail": "txSynopsis"
             }
@@ -50,10 +42,11 @@
         {
             "table": "Review",
             "pk_field": "idReview",
-            "field_list": [
-                "dtExhibition",
-                "vlRating",                
-            ],
+            "field_list": {
+                "idReview": "int",
+                "Exhibition": "date",
+                "Rating": "float"
+            },
             "nested": [
                 "Viewer",
                 "Movie"
