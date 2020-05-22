@@ -1,5 +1,5 @@
 # Escher
-
+![](Logo.png)
 
 ## What is the *"Escher"* and what is it for?
 **Escher** is a command line tool that lays the foundation for your APP

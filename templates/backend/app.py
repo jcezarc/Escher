@@ -67,5 +67,9 @@ def get_api():
     )
     return jsonify(generator.content)
 
+@APP.route('/health')
+def health():
+    return 'OK', 200
+
 if __name__ == '__main__':
     APP.run(debug=True)
