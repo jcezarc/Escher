@@ -1,4 +1,5 @@
 import os
+import re
 from base_generator import BaseGenerator, ANGULAR_KEYS
 
 class FrontendGenerator(BaseGenerator):
@@ -47,14 +48,14 @@ class FrontendGenerator(BaseGenerator):
                     ],
                     '': [
                         (
-                            'comp.model.ts',
+                            'comp-model.ts',
                             {
                                 'fieldList': 'field_list.comp.ts'
                             }
                         ),
-                        'comp.service.ts',
-                        'comp.component.html',
-                        'comp.component.ts'
+                        'comp-service.ts',
+                        'comp-component.html',
+                        'comp-component.ts'
                     ]
                 },
                 'header': [
@@ -67,9 +68,13 @@ class FrontendGenerator(BaseGenerator):
         }
 
     def rename(self, text, table):
+        root, file_name = os.path.split(text)
+        if 'component' in root:
+            root = re.sub(r'\bcomponent\b', table, root)
+            text = os.path.join(root, file_name)
         if 'new-' in text:
-            return text.replace('-comp', table)
-        return text.replace('comp-', table)
+            return text.replace('-comp', '-'+table)
+        return text.replace('comp-', table+'-')
 
     def extract_table_info(self, obj):
         result = super().extract_table_info(obj)

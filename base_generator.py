@@ -87,9 +87,9 @@ class BaseGenerator:
             text = result
         return text, has_fields
 
-    def render_code(self, file_name, paths, read_only=False):
+    def render_code(self, file_names, paths, read_only=False):
         params = self.summary
-        main_file = file_name[0]
+        main_file = file_names[0]
         origin = os.path.join(
             self.root_dir(),
             paths[0],
@@ -118,7 +118,7 @@ class BaseGenerator:
             if isinstance(value, str):
                 text = text.replace(f'%{key}%', value)
         if not read_only:
-            target = os.path.join(target, file_name[-1])
+            target = os.path.join(target, file_names[-1])
             with open(target, 'w') as f:
                 f.write(text)
                 f.close()
@@ -153,15 +153,18 @@ class BaseGenerator:
                 continue
             shutil.copy2(s, d)
 
-    def merge_files(self, root, info):
+    def merge_files(self, root, info, table):
         params = info[1]
         for key in params:
             self.summary[key] = self.render_code(
-                file_name=[params[key]],
+                file_names=[params[key]],
                 paths=[root],
                 read_only=True
             )
-        return [info[0]]
+        return [
+            info[0],
+            self.rename(info[0], table)
+        ]
 
     def build_app(self, params, table, root=''):
         is_dict = isinstance(params, dict)
@@ -175,12 +178,13 @@ class BaseGenerator:
                 )
             elif is_list:
                 if isinstance(item, tuple):
-                    file_name = self.merge_files(
+                    file_names = self.merge_files(
                         root,
-                        item
+                        item,
+                        table
                     )
                 else:
-                    file_name = [
+                    file_names = [
                         item,
                         self.rename(item, table)
                     ]
@@ -189,7 +193,7 @@ class BaseGenerator:
                         root,
                         self.rename(root, table)
                     ],
-                    file_name=file_name
+                    file_names=file_names
                 )
 
     def rename(self, text, table):
