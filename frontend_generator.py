@@ -1,4 +1,4 @@
-from base_generator import BaseGenerator
+from base_generator import BaseGenerator, ANGULAR_KEYS
 
 class FrontendGenerator(BaseGenerator):
 
@@ -13,7 +13,7 @@ class FrontendGenerator(BaseGenerator):
 
     def template_list(self):
         return {
-            '':[
+            'app':[
                 ('app.module.ts',{
                     'importModule_List':'list.import.module.ts'
                     ,
@@ -73,11 +73,11 @@ class FrontendGenerator(BaseGenerator):
         angular_data = obj.get('Angular')
         if angular_data:
             for key in ANGULAR_KEYS:
-                self.summary = obj.get(key, '')
+                self.summary[key] = obj.get(key, '')
             label_colors = angular_data.get('label-colors',{})
             for color in label_colors:
                 self.summary[color] = label_colors[color]
         return result
 
-    def util_folder():
+    def util_folder(self):
         return 'shared'

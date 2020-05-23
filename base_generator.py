@@ -44,11 +44,11 @@ class BaseGenerator:
     def ignore_list(self):
         return []
 
-    def root_dir(self):
+    def root_dir(self, base_path='templates'):
         # FrontendGenerator => '.../frontend'
         # BackendGenerator => '.../backend'
         return os.path.join(
-            'templates',
+            base_path,
             self.__class__.__name__.replace(
                 'Generator', ''
             ).lower()
@@ -95,7 +95,11 @@ class BaseGenerator:
             path,
             main_file
         )
-        target = os.path.join(self.api_name, path)
+        target = os.path.join(
+            self.api_name,
+            self.root_dir(''),
+            path
+        )
         if not os.path.exists(target):
             os.makedirs(target)
             self.create_empty_dir(target)
@@ -111,12 +115,9 @@ class BaseGenerator:
             text = new_text
         for key in params:
             value = params[key]
-            text = text.replace(f'%{key}%', value)
+            if isinstance(value, str):
+                text = text.replace(f'%{key}%', value)
         if not read_only:
-            print('-'*100)
-            print(f'\ttarget={target}')
-            print(f'\tfile_name[-1]={file_name[-1]}')
-            print('-'*100)
             target = os.path.join(target, file_name[-1])
             with open(target, 'w') as f:
                 f.write(text)
@@ -127,12 +128,16 @@ class BaseGenerator:
     def template_list(self):
         return {}
 
-    def util_folder():
+    def util_folder(self):
         pass
 
     def copy_folder(self, folder):
         src = os.path.join(self.root_dir(), folder)
-        dst = os.path.join(self.api_name, folder)
+        dst = os.path.join(
+            self.api_name,
+            self.root_dir(''),
+            folder
+        )
         if not os.path.exists(dst):
             os.makedirs(dst)
         ignore_list = self.ignore_list()
@@ -142,7 +147,7 @@ class BaseGenerator:
             s = os.path.join(src, f)
             d = os.path.join(dst, f)
             if os.path.isdir(s):
-                self.copy_util(
+                self.copy_folder(
                     os.path.join(folder, f)
                 )
                 continue
@@ -150,6 +155,9 @@ class BaseGenerator:
 
     def merge_files(self, root, info):
         params = info[1]
+        print('-'*100)
+        print(f'\ttype(self.summary)={type(self.summary)}')
+        print('-'*100)
         for key in params:
             self.summary[key] = self.render_code(
                 file_name=[params[key]],
@@ -190,7 +198,7 @@ class BaseGenerator:
     def extract_table_info(self, obj):
         for key in JSON_KEYS:
             if key in obj:
-                self.summary = obj[key]
+                self.summary[key] = obj[key]
         self.summary['API_name'] = self.api_name
         return obj['table']
 

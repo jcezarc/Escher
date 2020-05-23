@@ -65,7 +65,9 @@ class BackendGenerator(BaseGenerator):
             'model': (
                 'model.py',
                 {
-                    'fieldList': 'field_list.py'
+                    'fieldList': 'field_list.py',
+                    'imports': 'nested_import.py',
+                    'nested': 'nested.py'
                 }
             ),
             'resource':[
@@ -76,10 +78,10 @@ class BackendGenerator(BaseGenerator):
                 'service.py',
                 'db_connection.py'
             ],
-            'tests': ['testes.py']
+            'tests': ['tests.py']
         }
 
-    def util_folder():
+    def util_folder(self):
         return 'util'
 
     def rename(self, text, table):
@@ -87,6 +89,8 @@ class BackendGenerator(BaseGenerator):
             return text.replace('res_', table+'_')
         elif '_res' in text:
             return text.replace('_res', '_'+table)
+        else:
+            return text
 
     def formated_json_config(self):
         def indentation(num_tabs):

@@ -25,7 +25,7 @@ def main():
     front = FrontendGenerator(sys.argv[1])
     print('--- Backend ---')
     back.exec()
-    print('--- Frontend ---')
+    print('\n--- Frontend ---')
     front.exec()
     print('Success!')
 
