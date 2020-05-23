@@ -155,9 +155,6 @@ class BaseGenerator:
 
     def merge_files(self, root, info):
         params = info[1]
-        print('-'*100)
-        print(f'\ttype(self.summary)={type(self.summary)}')
-        print('-'*100)
         for key in params:
             self.summary[key] = self.render_code(
                 file_name=[params[key]],

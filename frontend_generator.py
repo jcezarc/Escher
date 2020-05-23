@@ -13,54 +13,56 @@ class FrontendGenerator(BaseGenerator):
 
     def template_list(self):
         return {
-            'app':[
-                ('app.module.ts',{
-                    'importModule_List':'list.import.module.ts'
-                    ,
-                    'Module_List':'list.module.ts'
-                    ,
-                    'Service_List':'list.service.ts'
-                }),
-                ('app.routes.ts',{
-                    'Routes_List':'list.routes.ts',
-                    'import_List':'list.import.ts'
-                }),
-                'app.component.ts',
-                'app.component.html',
-                'app.api.ts'
-            ],
-            'component': {
-                'comp-item': [
-                    'comp-item.component.css',
-                    'comp-item.component.html',
-                    'comp-item.component.ts',
-                ],
-                'comp-list': [
-                    'comp-list.component.html',
-                    'comp-list.component.ts',
-                ],
-                'new-comp': [
-                    'new-comp.component.html',
-                    'new-comp.component.ts'
-                ],
+            'app':{
                 '': [
-                    (
-                        'comp.model.ts',
-                        {
-                            'fieldList': 'field_list.comp.ts'
-                        }
-                    ),
-                    'comp.service.ts',
-                    'comp.component.html',
-                    'comp.component.ts'
+                    ('app.module.ts',{
+                        'importModule_List':'list.import.module.ts'
+                        ,
+                        'Module_List':'list.module.ts'
+                        ,
+                        'Service_List':'list.service.ts'
+                    }),
+                    ('app.routes.ts',{
+                        'Routes_List':'list.routes.ts',
+                        'import_List':'list.import.ts'
+                    }),
+                    'app.component.ts',
+                    'app.component.html',
+                    'app.api.ts'
+                ],
+                'component': {
+                    'comp-item': [
+                        'comp-item.component.css',
+                        'comp-item.component.html',
+                        'comp-item.component.ts',
+                    ],
+                    'comp-list': [
+                        'comp-list.component.html',
+                        'comp-list.component.ts',
+                    ],
+                    'new-comp': [
+                        'new-comp.component.html',
+                        'new-comp.component.ts'
+                    ],
+                    '': [
+                        (
+                            'comp.model.ts',
+                            {
+                                'fieldList': 'field_list.comp.ts'
+                            }
+                        ),
+                        'comp.service.ts',
+                        'comp.component.html',
+                        'comp.component.ts'
+                    ]
+                },
+                'header': [
+                    ('header.component.html',{
+                        'Link_List':'list.link.html'
+                    }),
+                    'header.component.ts'
                 ]
-            },
-            'header': [
-                ('header.component.html',{
-                    'Link_List':'list.link.html'
-                }),
-                'header.component.ts'
-            ]
+            }
         }
 
     def rename(self, text, table):
