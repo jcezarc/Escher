@@ -1,3 +1,4 @@
+import os
 from base_generator import BaseGenerator, ANGULAR_KEYS
 from db_defaults import default_params
 
@@ -42,7 +43,7 @@ class BackendGenerator(BaseGenerator):
                 main_file,
                 text
             )
-        return text, True
+        return new_text, True
 
     def field_type(self, value):
         return {
@@ -56,7 +57,7 @@ class BackendGenerator(BaseGenerator):
         return {
             '':[
                 ('app.py',{
-                    'config_route': 'config_route.py',
+                    'config_routes': 'config_routes.py',
                     'imports': 'imports.py',
                     'swagger_details': 'swagger_details.py',
                 }),

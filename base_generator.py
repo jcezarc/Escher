@@ -49,7 +49,9 @@ class BaseGenerator:
         # BackendGenerator => '.../backend'
         return os.path.join(
             'templates',
-            self.__class__.__name__.lower()
+            self.__class__.__name__.replace(
+                'Generator', ''
+            ).lower()
         )
       
     def create_empty_dir(self, target):
@@ -111,9 +113,13 @@ class BaseGenerator:
             value = params[key]
             text = text.replace(f'%{key}%', value)
         if not read_only:
+            print('-'*100)
+            print(f'\ttarget={target}')
+            print(f'\tfile_name[-1]={file_name[-1]}')
+            print('-'*100)
             target = os.path.join(target, file_name[-1])
             with open(target, 'w') as f:
-                f.write(result)
+                f.write(text)
                 f.close()
         print('.', end='')
         return text
@@ -183,7 +189,8 @@ class BaseGenerator:
 
     def extract_table_info(self, obj):
         for key in JSON_KEYS:
-            self.summary = obj[key]
+            if key in obj:
+                self.summary = obj[key]
         self.summary['API_name'] = self.api_name
         return obj['table']
 
