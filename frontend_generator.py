@@ -1,3 +1,4 @@
+import os
 from base_generator import BaseGenerator, ANGULAR_KEYS
 
 class FrontendGenerator(BaseGenerator):
@@ -82,4 +83,4 @@ class FrontendGenerator(BaseGenerator):
         return result
 
     def util_folder(self):
-        return 'shared'
+        return os.path.join('app', 'shared')

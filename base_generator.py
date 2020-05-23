@@ -185,7 +185,7 @@ class BaseGenerator:
                         self.rename(item, table)
                     ]
                 self.render_code(
-                    path=root,
+                    path=self.rename(root, table),
                     file_name=file_name
                 )
 

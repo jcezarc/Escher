@@ -60,16 +60,15 @@ class BackendGenerator(BaseGenerator):
                     'config_routes': 'config_routes.py',
                     'imports': 'imports.py',
                     'swagger_details': 'swagger_details.py',
-                }),
+                })
             ],
-            'model': (
-                'model.py',
-                {
+            'model': [
+                ('model.py',{
                     'fieldList': 'field_list.py',
-                    'imports': 'nested_import.py',
+                    'imports': 'nested_imports.py',
                     'nested': 'nested.py'
-                }
-            ),
+                })
+            ],
             'resource':[
                 'all_res.py',
                 'res_by_id.py'

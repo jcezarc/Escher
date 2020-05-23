@@ -47,10 +47,10 @@
                 "Exhibition": "date",
                 "Rating": "float"
             },
-            "nested": [
-                "Viewer",
-                "Movie"
-            ]
+            "nested": {
+                "viewer": "Viewer",
+                "movie": "Movie"
+            }
         }
     ],
     "db_type": "Neo4J",
