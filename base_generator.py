@@ -58,28 +58,15 @@ class BaseGenerator:
     def field_type(self, value):
         pass
 
-    def render_code(self, file_name, path='', read_only=False):
+    def check_lists(self, key, main_file, text):
         params = self.summary
-        ID_FIELD_LIST = 'field_list'
-        main_file = file_name[0]
-        origin = os.path.join(
-            self.root_dir(),
-            path,
-            main_file
-        )
-        target = os.path.join(self.api_name, path)
-        if not os.path.exists(target):
-            os.makedirs(target)
-            self.create_empty_dir(target)
-        with open(origin, 'r') as f:
-            text = f.read()
-            f.close()
-        field_list = params.pop(ID_FIELD_LIST, None)
-        has_fields = main_file[:10] == ID_FIELD_LIST
-        if field_list and has_fields:
+        size = len(key)
+        has_fields = main_file[:size] == key
+        if has_fields:
+            field_list = params.pop(key, None)
+            if field_list is None:
+                return text, False
             result = ''
-            # ----- Transformar em função
-            # ----- para usar com NESTED!
             for field in field_list:
                 if field == params['pk_field']:
                     attr = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
@@ -96,7 +83,30 @@ class BaseGenerator:
                     attr
                 )
             text = result
-            # -------------------------------
+        return text, has_fields
+
+    def render_code(self, file_name, path='', read_only=False):
+        params = self.summary
+        main_file = file_name[0]
+        origin = os.path.join(
+            self.root_dir(),
+            path,
+            main_file
+        )
+        target = os.path.join(self.api_name, path)
+        if not os.path.exists(target):
+            os.makedirs(target)
+            self.create_empty_dir(target)
+        with open(origin, 'r') as f:
+            text = f.read()
+            f.close()
+        new_text, changed = self.check_lists(
+            'field_list',
+            main_file,
+            text
+        )
+        if changed:
+            text = new_text
         for key in params:
             value = params[key]
             text = text.replace(f'%{key}%', value)

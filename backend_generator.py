@@ -30,6 +30,20 @@ class BackendGenerator(BaseGenerator):
             f.write(' ')
             f.close()
 
+    def check_lists(self, key, main_file, text):
+        new_text, changed = super().check_lists(
+            'nested',
+            main_file,
+            text
+        )
+        if not changed:
+            return super().check_lists(
+                key,
+                main_file,
+                text
+            )
+        return text, True
+
     def field_type(self, value):
         return {
             'str': 'Str',
