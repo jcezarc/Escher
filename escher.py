@@ -27,6 +27,6 @@ def main():
     back.exec()
     print('\n--- Frontend ---')
     front.exec()
-    print('Success!')
+    print('\nSuccess!')
 
 main()

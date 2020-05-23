@@ -9,7 +9,7 @@ class FrontendGenerator(BaseGenerator):
             'int': 'int',
             'date': 'string', #-- new Date() ??
             'float': 'number'
-        }[value]
+        }.get(value, value)
 
 
     def template_list(self):
@@ -68,7 +68,7 @@ class FrontendGenerator(BaseGenerator):
 
     def rename(self, text, table):
         if 'new-' in text:
-            return text.replace('new-', table)
+            return text.replace('-comp', table)
         return text.replace('comp-', table)
 
     def extract_table_info(self, obj):

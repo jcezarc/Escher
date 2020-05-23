@@ -87,18 +87,18 @@ class BaseGenerator:
             text = result
         return text, has_fields
 
-    def render_code(self, file_name, path='', read_only=False):
+    def render_code(self, file_name, paths, read_only=False):
         params = self.summary
         main_file = file_name[0]
         origin = os.path.join(
             self.root_dir(),
-            path,
+            paths[0],
             main_file
         )
         target = os.path.join(
             self.api_name,
             self.root_dir(''),
-            path
+            paths[-1]
         )
         if not os.path.exists(target):
             os.makedirs(target)
@@ -158,7 +158,7 @@ class BaseGenerator:
         for key in params:
             self.summary[key] = self.render_code(
                 file_name=[params[key]],
-                path=root,
+                paths=[root],
                 read_only=True
             )
         return [info[0]]
@@ -185,7 +185,10 @@ class BaseGenerator:
                         self.rename(item, table)
                     ]
                 self.render_code(
-                    path=self.rename(root, table),
+                    paths=[
+                        root,
+                        self.rename(root, table)
+                    ],
                     file_name=file_name
                 )
 

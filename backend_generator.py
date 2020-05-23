@@ -51,7 +51,7 @@ class BackendGenerator(BaseGenerator):
             'int': 'Integer',
             'date': 'Date',
             'float': 'Float'
-        }[value]
+        }.get(value, value)
 
     def template_list(self):
         return {
