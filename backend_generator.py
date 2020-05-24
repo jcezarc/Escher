@@ -22,7 +22,7 @@ class BackendGenerator(BaseGenerator):
         dao = self.dao_info['import_dao_class']+'.py'
         return [i for i in db_list if i != dao]
 
-    def create_empty_dir(self, target):
+    def on_create_dir(self, target):
         init_file = os.path.join(
             target,
             '__init__.py'
@@ -31,14 +31,14 @@ class BackendGenerator(BaseGenerator):
             f.write(' ')
             f.close()
 
-    def check_lists(self, key, main_file, text):
-        new_text, changed = super().check_lists(
+    def check_fields(self, key, main_file, text):
+        new_text, changed = super().check_fields(
             'nested',
             main_file,
             text
         )
         if not changed:
-            return super().check_lists(
+            return super().check_fields(
                 key,
                 main_file,
                 text
@@ -87,7 +87,7 @@ class BackendGenerator(BaseGenerator):
         if 'comp_' in text:
             return text.replace('comp_', table+'_')
         if '_comp' in text:
-            return text.replace('_res', '_'+table)
+            return text.replace('_comp', '_'+table)
         return text
 
     def formated_json_config(self):
@@ -111,8 +111,8 @@ class BackendGenerator(BaseGenerator):
         IMP_DAO = 'import_dao_class'
         DAO_CLS = 'dao_class'
         result = super().extract_table_info(obj)
-        self.summary['is_SQL'] = str(self.is_sql)
-        self.summary['extra'] = self.formated_json_config()
-        self.summary[IMP_DAO] = self.dao_info[IMP_DAO]
-        self.summary[DAO_CLS] = self.dao_info[DAO_CLS]
+        self.source['is_SQL'] = str(self.is_sql)
+        self.source['extra'] = self.formated_json_config()
+        self.source[IMP_DAO] = self.dao_info[IMP_DAO]
+        self.source[DAO_CLS] = self.dao_info[DAO_CLS]
         return result

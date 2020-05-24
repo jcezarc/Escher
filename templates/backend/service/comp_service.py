@@ -14,7 +14,7 @@ class %table%Service:
         if table:
             self.table = table
         else:
-            self.table = get_table()
+            self.table = get_table(%table%Model)
 
     def find(self, params, %pk_field%=None):
         if %pk_field%:

@@ -2,7 +2,7 @@ import sys
 from backend_generator import BackendGenerator
 from frontend_generator import FrontendGenerator
 
-CURR_VERSION = '1.20.5.23'
+CURR_VERSION = '1.20.5.24'
 
 def main():
     if len(sys.argv) < 2:
@@ -13,7 +13,7 @@ def main():
             > python Escher.py <JSON file>
 
             Example:
-            > python Escher.py Movies
+            > python Escher.py Movies.json
             """.format(
                 CURR_VERSION
             )

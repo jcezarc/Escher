@@ -33,7 +33,7 @@ class BaseGenerator:
                 return
             self.api_name = file_name
         self.tables = self.json_info['tables']
-        self.summary = {}
+        self.source = {}
 
     def load_json(self, file_name):
         with open(file_name+'.json', 'r') as f:
@@ -54,23 +54,22 @@ class BaseGenerator:
             ).lower()
         )
       
-    def create_empty_dir(self, target):
+    def on_create_dir(self, target):
         pass
 
     def field_type(self, value):
         pass
 
-    def check_lists(self, key, main_file, text):
-        params = self.summary
+    def check_fields(self, key, main_file, text):
         size = len(key)
         has_fields = main_file[:size] == key
         if has_fields:
-            field_list = params.pop(key, None)
+            field_list = self.source.get(key)
             if field_list is None:
                 return text, False
             result = ''
             for field in field_list:
-                if field == params['pk_field']:
+                if field == self.source['pk_field']:
                     attr = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
                 else:
                     attr = ''
@@ -88,42 +87,40 @@ class BaseGenerator:
         return text, has_fields
 
     def render_code(self, file_names, paths, read_only=False):
-        params = self.summary
         main_file = file_names[0]
         origin = os.path.join(
             self.root_dir(),
             paths[0],
             main_file
         )
-        target = os.path.join(
-            self.api_name,
-            self.root_dir(''),
-            paths[-1]
-        )
         #---
-        # [to-DO] Verificar quando paths[0] é VAZIO ("")
-        #  (1)= app.py <target> deve ser lida como <origin>
-        #  (2)= frontend/component NÃO deve ser criado
-        #                           (os.makedirs...)
+        # [to-DO]  Quando um arquivo já foi
+        #           renderizado, deve ser
+        #           lido do <target>
         #---
-        if not os.path.exists(target):
-            os.makedirs(target)
-            self.create_empty_dir(target)
         with open(origin, 'r') as f:
             text = f.read()
             f.close()
-        new_text, changed = self.check_lists(
+        new_text, changed = self.check_fields(
             'field_list',
             main_file,
             text
         )
         if changed:
             text = new_text
-        for key in params:
-            value = params[key]
+        for key in self.source:
+            value = self.source[key]
             if isinstance(value, str):
                 text = text.replace(f'%{key}%', value)
         if not read_only:
+            target = os.path.join(
+                self.api_name,
+                self.root_dir(''),
+                paths[-1]
+            )
+            if not os.path.exists(target):
+                os.makedirs(target)
+                self.on_create_dir(target)
             target = os.path.join(target, file_names[-1])
             with open(target, 'w') as f:
                 f.write(text)
@@ -162,7 +159,7 @@ class BaseGenerator:
     def merge_files(self, root, info, table):
         params = info[1]
         for key in params:
-            self.summary[key] = self.render_code(
+            self.source[key] = self.render_code(
                 file_names=[params[key]],
                 paths=[root],
                 read_only=True
@@ -208,15 +205,15 @@ class BaseGenerator:
     def extract_table_info(self, obj):
         for key in JSON_KEYS:
             if key in obj:
-                self.summary[key] = obj[key]
-        self.summary['API_name'] = self.api_name
+                self.source[key] = obj[key]
+        self.source['API_name'] = self.api_name
         return obj['table']
 
     def exec(self):
         if self.json_info is None:
             return
         for table in self.tables:
-            self.summary = {}
+            self.source = {}
             table_name = self.extract_table_info(table)
             self.build_app(
                 self.template_list(), 

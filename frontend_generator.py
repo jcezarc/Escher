@@ -81,10 +81,10 @@ class FrontendGenerator(BaseGenerator):
         angular_data = obj.get('Angular')
         if angular_data:
             for key in ANGULAR_KEYS:
-                self.summary[key] = obj.get(key, '')
+                self.source[key] = obj.get(key, '')
             label_colors = angular_data.get('label-colors',{})
             for color in label_colors:
-                self.summary[color] = label_colors[color]
+                self.source[color] = label_colors[color]
         return result
 
     def util_folder(self):

@@ -1,4 +1,4 @@
 from util.db.%import_dao_class% import %dao_class%
 
-def get_table():
-    return %dao_class%(%table%Model, %extra%)
+def get_table(schema):
+    return %dao_class%(schema, %extra%)
