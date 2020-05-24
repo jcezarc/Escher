@@ -100,6 +100,12 @@ class BaseGenerator:
             self.root_dir(''),
             paths[-1]
         )
+        #---
+        # [to-DO] Verificar quando paths[0] é VAZIO ("")
+        #  (1)= app.py <target> deve ser lida como <origin>
+        #  (2)= frontend/component NÃO deve ser criado
+        #                           (os.makedirs...)
+        #---
         if not os.path.exists(target):
             os.makedirs(target)
             self.create_empty_dir(target)

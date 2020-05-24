@@ -1,5 +1,5 @@
 import logging
-from model.%table% import %table%Model
+from model.%table%_model import %table%Model
 from util.messages import (
     resp_erro,
     resp_not_found,

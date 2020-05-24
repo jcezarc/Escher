@@ -63,33 +63,32 @@ class BackendGenerator(BaseGenerator):
                 })
             ],
             'model': [
-                ('model.py',{
+                ('comp_model.py',{
                     'fieldList': 'field_list.py',
                     'imports': 'nested_imports.py',
                     'nested': 'nested.py'
                 })
             ],
             'resource':[
-                'all_res.py',
-                'res_by_id.py'
+                'all_comp.py',
+                'comp_by_id.py'
             ],
             'service': [
-                'service.py',
+                'comp_service.py',
                 'db_connection.py'
             ],
-            'tests': ['tests.py']
+            'tests': ['comp_tests.py']
         }
 
     def util_folder(self):
         return 'util'
 
     def rename(self, text, table):
-        if 'res_' in text:
-            return text.replace('res_', table+'_')
-        elif '_res' in text:
+        if 'comp_' in text:
+            return text.replace('comp_', table+'_')
+        if '_comp' in text:
             return text.replace('_res', '_'+table)
-        else:
-            return text
+        return text
 
     def formated_json_config(self):
         def indentation(num_tabs):

@@ -1,5 +1,4 @@
 .vscode
-Teste.json
 __pycache__
-/Teste
+/Movies
 .pytest_cache

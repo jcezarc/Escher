@@ -1,1 +1,1 @@
-from model.%nested% import %nested%Model
+from model.%field_type% import %field_type%Model
