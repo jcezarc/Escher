@@ -31,20 +31,6 @@ class BackendGenerator(BaseGenerator):
             f.write(' ')
             f.close()
 
-    def check_fields(self, key, main_file, text):
-        new_text, changed = super().check_fields(
-            'nested',
-            main_file,
-            text
-        )
-        if not changed:
-            return super().check_fields(
-                key,
-                main_file,
-                text
-            )
-        return new_text, True
-
     def field_type(self, value):
         return {
             'str': 'Str',

@@ -78,7 +78,7 @@ class FrontendGenerator(BaseGenerator):
 
     def extract_table_info(self, obj):
         result = super().extract_table_info(obj)
-        angular_data = obj.get('Angular')
+        angular_data = obj.pop('Angular', None)
         if angular_data:
             for key in ANGULAR_KEYS:
                 self.source[key] = obj.get(key, '')

@@ -61,6 +61,13 @@ class BaseGenerator:
         pass
 
     def check_fields(self, key, main_file, text):
+        def default_value(value):
+            return {
+                        'str': '"000"',
+                        'int': '0',
+                        'date': '"2020-05-24"',
+                        'float': '0.00'
+                    }[value]
         size = len(key)
         has_fields = main_file[:size] == key
         if has_fields:
@@ -70,7 +77,9 @@ class BaseGenerator:
             result = ''
             for field in field_list:
                 if field == self.source['pk_field']:
-                    attr = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
+                    attr = 'primary_key=True, default={}, required=True'.format(
+                        default_value(field_list[field])
+                    )
                 else:
                     attr = ''
                 result += text.replace(
@@ -84,7 +93,7 @@ class BaseGenerator:
                     attr
                 )
             text = result
-        return text, has_fields
+        return text
 
     def render_code(self, file_names, paths, read_only=False):
         main_file = file_names[0]
@@ -101,16 +110,15 @@ class BaseGenerator:
         with open(origin, 'r') as f:
             text = f.read()
             f.close()
-        new_text, changed = self.check_fields(
-            'field_list',
-            main_file,
-            text
-        )
-        if changed:
-            text = new_text
         for key in self.source:
             value = self.source[key]
-            if isinstance(value, str):
+            if isinstance(value, dict):
+                text = self.check_fields(
+                    key,
+                    main_file,
+                    text
+                )
+            else:
                 text = text.replace(f'%{key}%', value)
         if not read_only:
             target = os.path.join(
