@@ -34,6 +34,7 @@ class BaseGenerator:
             self.api_name = file_name
         self.tables = self.json_info['tables']
         self.source = {}
+        self.bundle = {}
 
     def load_json(self, file_name):
         with open(file_name+'.json', 'r') as f:
@@ -95,6 +96,9 @@ class BaseGenerator:
             text = result
         return text
 
+    def is_bundle(self, path, file_name):
+        pass
+
     def render_code(self, file_names, paths, read_only=False):
         main_file = file_names[0]
         origin = os.path.join(
@@ -102,11 +106,6 @@ class BaseGenerator:
             paths[0],
             main_file
         )
-        #---
-        # [to-DO]  Quando um arquivo já foi
-        #           renderizado, deve ser
-        #           lido do <target>
-        #---
         with open(origin, 'r') as f:
             text = f.read()
             f.close()
@@ -166,16 +165,29 @@ class BaseGenerator:
 
     def merge_files(self, root, info, table):
         params = info[1]
+        main_file = info[0]
+        is_bundle = self.is_bundle(root, main_file)
+        if is_bundle:
+            dataset = self.bundle.setdefault(
+                main_file, {
+                    'path': root
+                }
+            )
+        else:
+            dataset = self.source
         for key in params:
-            self.source[key] = self.render_code(
+            value = self.render_code(
                 file_names=[params[key]],
                 paths=[root],
                 read_only=True
             )
+            if is_bundle:
+                value = dataset.get(key, '') + value
+            dataset[key] = value
         return [
-            info[0],
-            self.rename(info[0], table)
-        ]
+            main_file,
+            self.rename(main_file, table)
+        ], is_bundle
 
     def build_app(self, params, table, root=''):
         is_dict = isinstance(params, dict)
@@ -189,11 +201,13 @@ class BaseGenerator:
                 )
             elif is_list:
                 if isinstance(item, tuple):
-                    file_names = self.merge_files(
+                    file_names, ignore = self.merge_files(
                         root,
                         item,
                         table
                     )
+                    if ignore:
+                        continue
                 else:
                     file_names = [
                         item,
@@ -210,12 +224,27 @@ class BaseGenerator:
     def rename(self, text, table):
         pass
 
+    def init_source(self):
+        self.source = {}
+        self.source['API_name'] = self.api_name
+
     def extract_table_info(self, obj):
+        self.init_source()
         for key in JSON_KEYS:
             if key in obj:
                 self.source[key] = obj[key]
-        self.source['API_name'] = self.api_name
         return obj['table']
+
+    def unpack(self):
+        for file_name in self.bundle:
+            params = self.bundle[file_name]
+            path = params.pop('path')
+            self.init_source()
+            self.source.update(params)
+            self.render_code(
+                file_names=[file_name],
+                paths=[path]
+            )
 
     def exec(self):
         if self.json_info is None:
@@ -227,4 +256,5 @@ class BaseGenerator:
                 self.template_list(), 
                 table_name
             )
+        self.unpack()
         self.copy_folder(self.util_folder())

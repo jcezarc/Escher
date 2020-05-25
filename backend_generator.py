@@ -97,8 +97,16 @@ class BackendGenerator(BaseGenerator):
         IMP_DAO = 'import_dao_class'
         DAO_CLS = 'dao_class'
         result = super().extract_table_info(obj)
-        self.source['is_SQL'] = str(self.is_sql)
         self.source['extra'] = self.formated_json_config()
         self.source[IMP_DAO] = self.dao_info[IMP_DAO]
         self.source[DAO_CLS] = self.dao_info[DAO_CLS]
         return result
+
+    def is_bundle(self, path, file_name):
+        if path == '' and file_name == 'app.py':
+            return True
+        return False
+
+    def init_source(self):
+        super().init_source()
+        self.source['is_SQL'] = str(self.is_sql)
