@@ -4,7 +4,7 @@ import { Observable } from "../../../node_modules/rxjs";
 import { %table%Model } from "./%table%.model";
 import { RespJsonFlask } from "../app.api";
 
-%table%_API = 'localhost:5000/%API_name%/%table%'
+const %table%_API = 'localhost:5000/%API_name%/%table%'
 
 
 @Injectable()
