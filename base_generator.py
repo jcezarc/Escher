@@ -64,9 +64,9 @@ class BaseGenerator:
     def get_field_attrib(self, field_name):
         return ''
 
-    def check_fields(self, key, main_file, text):
+    def check_fields(self, key, curr_file, text):
         size = len(key)
-        has_fields = main_file[:size] == key
+        has_fields = curr_file[:size] == key
         if has_fields:
             field_list = self.source[key]
             result = ''
@@ -88,11 +88,11 @@ class BaseGenerator:
         pass
 
     def render_code(self, file_names, paths, read_only=False):
-        main_file = file_names[0]
+        curr_file = file_names[0]
         origin = os.path.join(
             self.root_dir(),
             paths[0],
-            main_file
+            curr_file
         )
         with open(origin, 'r') as f:
             text = f.read()
@@ -102,7 +102,7 @@ class BaseGenerator:
             if isinstance(value, dict):
                 text = self.check_fields(
                     key,
-                    main_file,
+                    curr_file,
                     text
                 )
             else:

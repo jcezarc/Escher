@@ -47,6 +47,11 @@
                 "Exhibition": "date",
                 "Rating": "float"
             },
+            "Angular": {
+                "title": "Exhibition",
+                "label": "idReview",
+                "detail": "Rating"
+            },
             "nested": {
                 "viewer": "User",
                 "movie": "Movie"

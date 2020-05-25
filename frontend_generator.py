@@ -35,7 +35,9 @@ class FrontendGenerator(BaseGenerator):
                 'component': {
                     'comp-item': [
                         'comp-item.component.css',
-                        'comp-item.component.html',
+                        ('comp-item.component.html',{
+                            'colors': 'colors-label.html'
+                        }),
                         'comp-item.component.ts',
                     ],
                     'comp-list': [
@@ -78,13 +80,22 @@ class FrontendGenerator(BaseGenerator):
 
     def extract_table_info(self, obj):
         result = super().extract_table_info(obj)
-        angular_data = obj.pop('Angular', None)
-        if angular_data:
-            for key in ANGULAR_KEYS:
-                self.source[key] = obj.get(key, '')
-            label_colors = angular_data.get('label-colors',{})
-            for color in label_colors:
-                self.source[color] = label_colors[color]
+        angular_data = obj.pop('Angular', {})
+        if 'image' in angular_data:
+            self.source['img_tag'] = """
+            <img [src]="%table%.%image%" 
+                class="img-%table%" height="96" 
+                onerror="this.onerror=null;this.src='assets/img/%table%/default.png'"
+            >
+            """
+        else:
+            self.source['img_tag'] = ''
+        for key in ANGULAR_KEYS:
+            self.source[key] = angular_data.get(key, '')
+        self.source['colors'] = angular_data.get(
+            'label-colors',
+            {}
+        )
         return result
 
     def util_folder(self):
@@ -95,3 +106,11 @@ class FrontendGenerator(BaseGenerator):
         if path == 'header' and file_name == 'header.component.html':
             return True
         return False
+
+    def get_field_attrib(self, field_name):
+        return {
+            'red': 'danger',
+            'yellow': 'warning',
+            'green': 'success',
+            'blue': 'info',
+        }.get(field_name, '')

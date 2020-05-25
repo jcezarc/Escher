@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { %table%Model } from '../%table%.model';
+import { %table%Model } from '../%table%-model';
 
 @Component({
   selector: 'app-%table%-item',

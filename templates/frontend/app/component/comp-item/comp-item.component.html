@@ -1,32 +1,18 @@
 <div class="card mt-4">
     <div class="row">
         <div class="col-4">    
-            <img [src]="%table%.%image%" class="img-%table%" height="96" onerror="this.onerror=null;this.src='assets/img/%table%/default.png'">
+            %img_tag%
         </div>
         <div class="col-6">
             <h4>
-                {{%table%.title}}
+                {{%table%.%title%}}
             </h4>
         </div>
         <ng-content></ng-content>
     </div>
     <div class="row">
         <div class="col-4 mx-1">
-            <!-- <span class="text-muted small">
-                <strong>{{%table%.%label%}}</strong>
-            </span> -->
-            <span *ngIf="%table%.%label% == %yellow%" class="badge badge-warning">
-                VIP
-            </span>
-            <span *ngIf="%table%.%label% == %red%" class="badge badge-danger">
-                Admin
-            </span>
-            <span *ngIf="%table%.%label% == %green%" class="badge badge-success">
-                Básico
-            </span>
-            <span *ngIf="%table%.%label% == %blue%" class="badge badge-info">
-              Eventual
-            </span>
+            %colors%
          </div>
         <div class="col-6 ml-1">
             <span class="text-muted small">

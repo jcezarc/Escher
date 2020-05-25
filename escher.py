@@ -2,7 +2,7 @@ import sys
 from backend_generator import BackendGenerator
 from frontend_generator import FrontendGenerator
 
-CURR_VERSION = '1.20.5.25.16.15'
+CURR_VERSION = '1.20.5.25.19.48'
 
 def main():
     if len(sys.argv) < 2:
