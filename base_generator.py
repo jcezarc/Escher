@@ -61,28 +61,16 @@ class BaseGenerator:
     def field_type(self, value):
         pass
 
+    def get_field_attrib(self, field_name):
+        return ''
+
     def check_fields(self, key, main_file, text):
-        def default_value(value):
-            return {
-                        'str': '"000"',
-                        'int': '0',
-                        'date': '"2020-05-24"',
-                        'float': '0.00'
-                    }[value]
         size = len(key)
         has_fields = main_file[:size] == key
         if has_fields:
-            field_list = self.source.get(key)
-            if field_list is None:
-                return text, False
+            field_list = self.source[key]
             result = ''
             for field in field_list:
-                if field == self.source['pk_field']:
-                    attr = 'primary_key=True, default={}, required=True'.format(
-                        default_value(field_list[field])
-                    )
-                else:
-                    attr = ''
                 result += text.replace(
                     '%field_name%',
                     field
@@ -91,7 +79,7 @@ class BaseGenerator:
                     self.field_type(field_list[field])
                 ).replace(
                     '%attributes%',
-                    attr
+                    self.get_field_attrib(field)
                 )
             text = result
         return text

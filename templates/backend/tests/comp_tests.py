@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
-from service.%table% import %table%Service
-from model.%table% import %table%Model, PK_DEFAULT_VALUE
+from service.%table%_service import %table%Service
+from model.%table%_model import %table%Model, PK_DEFAULT_VALUE
 from util.db.fake_table import FakeTable
 from util.messages import resp_ok, resp_not_found
 

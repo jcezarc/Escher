@@ -7,7 +7,7 @@ from util.messages import (
     resp_get_ok,
     resp_ok
 )
-from db_connection import get_table
+from service.db_connection import get_table
 
 class %table%Service:
     def __init__(self, table=None):

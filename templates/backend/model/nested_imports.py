@@ -1,1 +1,1 @@
-from model.%field_type% import %field_type%Model
+from model.%field_type%_model import %field_type%Model

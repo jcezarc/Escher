@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from service.%table% import %table%Service
+from service.%table%_service import %table%Service
 
 class %table%ById(Resource):
     def get(self, %pk_field%):

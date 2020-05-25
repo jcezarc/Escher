@@ -48,7 +48,7 @@
                 "Rating": "float"
             },
             "nested": {
-                "viewer": "Viewer",
+                "viewer": "User",
                 "movie": "Movie"
             }
         }

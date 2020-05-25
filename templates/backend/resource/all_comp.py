@@ -1,7 +1,7 @@
 import json
 from flask_restful import Resource
 from flask import request, jsonify
-from service.%table% import %table%Service
+from service.%table%_service import %table%Service
 
 class All%table%(Resource):
     def get(self):

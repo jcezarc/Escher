@@ -2,6 +2,8 @@ import os
 from base_generator import BaseGenerator, ANGULAR_KEYS
 from db_defaults import default_params
 
+PK_ATTRIB = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
+
 class BackendGenerator(BaseGenerator):
 
     def __init__(self, file_name):
@@ -51,7 +53,7 @@ class BackendGenerator(BaseGenerator):
             'model': [
                 ('comp_model.py',{
                     'fieldList': 'field_list.py',
-                    'imports': 'nested_imports.py',
+                    'nested_imports': 'nested_imports.py',
                     'nested': 'nested.py'
                 })
             ],
@@ -93,13 +95,29 @@ class BackendGenerator(BaseGenerator):
         )
         return result
 
+    def get_field_attrib(self, field_name):
+        pk_field = self.source['pk_field']
+        if field_name == pk_field:
+            return PK_ATTRIB
+        return ''
+
     def extract_table_info(self, obj):
         IMP_DAO = 'import_dao_class'
         DAO_CLS = 'dao_class'
         result = super().extract_table_info(obj)
+        pk_field = obj['pk_field']
+        field_list = obj['field_list']
+        type_of_pk = field_list[pk_field]
+        self.source['default'] = {
+            'str': '"000"',
+            'int': '0',
+            'date': '"2020-05-24"',
+            'float': '0.00'
+        }[type_of_pk]
         self.source['extra'] = self.formated_json_config()
         self.source[IMP_DAO] = self.dao_info[IMP_DAO]
         self.source[DAO_CLS] = self.dao_info[DAO_CLS]
+        self.source.setdefault('nested', {})
         return result
 
     def is_bundle(self, path, file_name):
