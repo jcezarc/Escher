@@ -44,12 +44,12 @@ export class %table%ListComponent implements OnInit {
     if(!confirm(`Remove %table% "${item.%title%}" ?`)){
       return
     }
-    this.%table%Svc.delete(item.%pk_field%)
+    this.%table%Svc.delete(item.%pk_field% as unknown as string)
     this.items.splice(this.items.indexOf(item),1)
   }
 
   save(item: %table%Model){
-    item.imagePath = `assets/img/items/${item.%pk_field%}.jpg`
+    %saveImage%
     this.%table%Svc.save%table%(item)
     this.items.push(item)
   }

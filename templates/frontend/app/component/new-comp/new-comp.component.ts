@@ -21,7 +21,6 @@ export class New%table%Component implements OnInit {
   ngOnInit() {
     this.router.onSameUrlNavigation = "reload"
     this.%table%Form = this.formBuilder.group({
-      %pk_field%: this.formBuilder.control('',[Validators.required]),
       %title% : this.formBuilder.control('',[Validators.required]),
       %label% : this.formBuilder.control('',[Validators.required]),
       %detail% : this.formBuilder.control('',[Validators.required])

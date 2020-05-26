@@ -7,17 +7,11 @@
 
             <div class="form-group">
                 <div class="form-group">
-                    <label>Id:</label>
-                    <input formControlName="%pk_field%" type="text" class="form-control" placeholder="Id">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="col">
-                    <label>%title%:</label>
+                    <label>%title%</label>
                     <input formControlName="%title%" type="text" class="form-control" placeholder="%title%">
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="col">
                     <label>%label%:</label>
@@ -37,7 +31,7 @@
             <div class=" form-group">
                 <button (click)="%table%List.save(%table%Form.value)" type="button" [disabled]="!%table%Form.valid" 
                 class="btn btn-info btn-block">
-                  Gravar Livro
+                  Gravar %table%
                 </button>
             </div>
     

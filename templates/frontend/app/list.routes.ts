@@ -1,2 +1,2 @@
-{path:'%table%s',component:%table%sComponent,canActivate: [LoginGuard]},
-{path:'new-%table%',component:New%table%Component,canActivate: [LoginGuard]},
+{path:'%table%',component:%table%Component},
+{path:'new-%table%',component:New%table%Component},

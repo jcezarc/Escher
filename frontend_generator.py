@@ -88,8 +88,10 @@ class FrontendGenerator(BaseGenerator):
                 onerror="this.onerror=null;this.src='assets/img/%table%/default.png'"
             >
             """
+            self.source['saveImage'] = "item.%image% = `assets/img/items/${(<string>item.%pk_field%)}.jpg`"
         else:
             self.source['img_tag'] = ''
+            self.source['saveImage'] = ''
         for key in ANGULAR_KEYS:
             self.source[key] = angular_data.get(key, '')
         self.source['colors'] = angular_data.get(
