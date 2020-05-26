@@ -54,7 +54,7 @@ class BaseGenerator:
                 'Generator', ''
             ).lower()
         )
-      
+
     def on_create_dir(self, target):
         pass
 

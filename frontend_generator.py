@@ -69,6 +69,15 @@ class FrontendGenerator(BaseGenerator):
             }
         }
 
+    def root_dir(self, base_path='templates'):
+        result = super().root_dir(base_path)
+        if base_path == '':
+            result = os.path.join(
+                result,
+                'src'
+            )
+        return result
+
     def rename(self, text, table):
         root, file_name = os.path.split(text)
         if 'component' in root:
