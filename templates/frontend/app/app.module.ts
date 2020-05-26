@@ -14,7 +14,7 @@ import { HeaderComponent } from './header/header.component'
 @NgModule({
   declarations: [
     AppComponent,
-    %Module_List%
+%Module_List%
     HeaderComponent,
     SearchBarComponent,
     NavigatorComponent,

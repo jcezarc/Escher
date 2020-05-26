@@ -104,6 +104,8 @@ class FrontendGenerator(BaseGenerator):
         return os.path.join('app', 'shared')
 
     def is_bundle(self, path, file_name):
+        if file_name == 'app.routes.ts':
+            return True
         path = os.path.split(path)[-1]
         if path == 'header' and file_name == 'header.component.html':
             return True
