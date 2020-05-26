@@ -7,8 +7,8 @@ class FrontendGenerator(BaseGenerator):
     def field_type(self, value):
         return {
             'str': 'string',
-            'int': 'int',
-            'date': 'string', #-- new Date() ??
+            'int': 'number',
+            'date': 'string',
             'float': 'number'
         }.get(value, value)
 

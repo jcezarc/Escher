@@ -1,7 +1,7 @@
 import { Http, RequestOptions, Headers, Response } from "@angular/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "../../../node_modules/rxjs";
-import { %table%Model } from "./%table%.model";
+import { %table%Model } from "./%table%-model";
 import { RespJsonFlask } from "../app.api";
 
 const %table%_API = 'localhost:5000/%API_name%/%table%'

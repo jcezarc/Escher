@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { %table%Model } from '../%table%.model';
-import { %table%Service } from '../%table%.service';
+import { %table%Model } from '../%table%-model';
+import { %table%Service } from '../%table%-service';
 import { Router } from '@angular/router';
 import {RespJsonFlask} from '../../app.api'
 
