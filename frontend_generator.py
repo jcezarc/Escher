@@ -1,6 +1,7 @@
 import os
 import re
-from base_generator import BaseGenerator, ANGULAR_KEYS
+from base_generator import BaseGenerator
+from key_names import ANGULAR_KEYS
 
 class FrontendGenerator(BaseGenerator):
 

@@ -1,0 +1,73 @@
+{
+    "tables": [
+        {
+            "table": "Book",
+            "pk_field": "book_id",
+            "field_list": {
+                "book_id": "str",
+                "title": "str",
+                "author": "str",
+                "about": "str",
+                "imagePath": "str"
+            },
+            "Angular": {
+                "image": "imagePath",
+                "title": "title",
+                "label": "author",
+                "detail": "about"
+            }
+        },
+        {
+            "table": "User",
+            "pk_field": "user_id",
+            "field_list":{
+                "user_id": "str",
+                "name": "str",
+                "type": "str",
+                "phone": "str",
+                "imagePath": "str"
+            },
+            "Angular":{
+                "image": "imagePath",
+                "title": "name",
+                "label": "type",
+                "label-colors":{
+                    "blue": "Eventual",
+                    "green": "Regular",
+                    "yellow": "VIP",
+                    "red": "Admin"
+                },
+                "detail": "phone"
+            }
+        },
+        {
+            "table": "Review",
+            "pk_field": "review_id",
+            "field_list":{
+                "review_id": "str",
+                "state": "str",
+                "ranking": "str",
+                "comments": "str"
+            },
+            "Angular":{
+                "title": "review_id",
+                "label": "ranking",
+                "detail": "comments"
+            },
+            "nested":{
+                "user": "User",
+                "book": "Book"
+            }
+        }
+    ],
+    "db_type": "Postgres",
+    "db_config":{
+            "dialect": "postgresql",
+            "driver": "psycopg2",
+            "username": "postgres",
+            "password": "",
+            "host": "localhost",
+            "port": "5432",
+            "database": "bookflix"
+    }
+}

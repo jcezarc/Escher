@@ -1,7 +1,7 @@
 <div class="navbar mt-2">
     <div class="nav-item">
         <form [formGroup]="searchForm" class="form-inline">
-            <input type="text" formControlName="searchContent" class="form-control" placeholder="Pesquisar por...">
+            <input type="text" formControlName="searchContent" class="form-control">
             <button (click)="emitFilterEvent(searchForm.value)" class="btn btn-light" type="button">
                 <img src="assets/img/btn/search_icon.png" width="20">
             </button>

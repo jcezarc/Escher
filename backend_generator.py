@@ -1,15 +1,13 @@
 import os
-from base_generator import BaseGenerator, ANGULAR_KEYS
+from base_generator import BaseGenerator
 from db_defaults import default_params
 
 PK_ATTRIB = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
 
 class BackendGenerator(BaseGenerator):
 
-    def __init__(self, file_name):
-        super().__init__(file_name)
-        if self.json_info is None:
-            return
+    def __init__(self, linter):
+        super().__init__(linter)
         db_type = self.json_info['db_type']
         db_config, aux = default_params(db_type)
         db_config.update(

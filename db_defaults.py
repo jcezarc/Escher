@@ -12,10 +12,10 @@ def default_params(db_type):
         'neo4j': {
             'host': 'localhost',
             'port': 7687,
-                    'user': '',
-                    'password': '',
-                    'import_dao_class': 'neo4j_table',
-                    'dao_class': 'Neo4Table'
+            'user': '',
+            'password': '',
+            'import_dao_class': 'neo4j_table',
+            'dao_class': 'Neo4Table'
         },
         'postgres': {
             "dialect": "postgresql",
@@ -23,10 +23,10 @@ def default_params(db_type):
             "username": "postgres",
             "password": "xxxxx",
             "host": "localhost",
-                    "port": "5432",
-                    "database": "pg01",
-                    'import_dao_class': 'sql_table',
-                    'dao_class': 'SqlTable'
+            "port": "5432",
+            "database": "pg01",
+            'import_dao_class': 'sql_table',
+            'dao_class': 'SqlTable'
         },
         'mongodb': {
             'server': 'mongodb+srv',
@@ -42,10 +42,10 @@ def default_params(db_type):
             "username": "",
             "password": "",
             "host": "localhost",
-                    "port": "1433",
-                    "database": "",
-                    'import_dao_class': 'sql_table',
-                    'dao_class': 'SqlTable'
+            "port": "1433",
+            "database": "",
+            'import_dao_class': 'sql_table',
+            'dao_class': 'SqlTable'
         }
     }
     result = params.get(db_type.lower(), {})
