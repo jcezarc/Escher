@@ -27,7 +27,7 @@ import { HeaderComponent } from './header/header.component'
     RouterModule.forRoot(ROUTES)
   ],
   providers: [
-    %Service_List%
+%Service_List%
   ],
   bootstrap: [AppComponent]
 })

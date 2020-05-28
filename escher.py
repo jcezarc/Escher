@@ -3,7 +3,7 @@ from backend_generator import BackendGenerator
 from frontend_generator import FrontendGenerator
 from json_linter import JSonLinter
 
-CURR_VERSION = 'v 1.200.527 R 20.51'
+CURR_VERSION = 'v 1.200.528 R 12.13'
 
 def main():
     if len(sys.argv) < 2:

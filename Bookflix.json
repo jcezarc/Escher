@@ -47,7 +47,9 @@
                 "review_id": "str",
                 "state": "str",
                 "ranking": "str",
-                "comments": "str"
+                "comments": "str",
+                "user": "str",
+                "book": "str"
             },
             "Angular":{
                 "title": "review_id",

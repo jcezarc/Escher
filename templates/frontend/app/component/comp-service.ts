@@ -41,7 +41,7 @@ export class %table%Service{
         const headers: Headers = new Headers()
         headers.append('Content-Type','application/json')
         this.http.post(
-            `${%table%_API}/%table%`,
+            %table%_API,
             JSON.stringify(newItem),
             new RequestOptions({headers:headers})
         ).subscribe(

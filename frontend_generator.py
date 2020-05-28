@@ -89,16 +89,17 @@ class FrontendGenerator(BaseGenerator):
         return text.replace('comp-', table+'-')
 
     def extract_table_info(self, obj):
-        result = super().extract_table_info(obj)
+        table = super().extract_table_info(obj)
+        pk_field = obj['pk_field']
         angular_data = obj.pop('Angular', {})
         if 'image' in angular_data:
-            self.source['img_tag'] = """
-            <img [src]="%table%.%image%" 
-                class="img-%table%" height="96" 
-                onerror="this.onerror=null;this.src='assets/img/%table%/default.png'"
+            self.source['img_tag'] = f"""
+            <img [src]="{table}.%image%" 
+                class="img-{table}" height="96" 
+                onerror="this.onerror=null;this.src='assets/img/{table}/default.png'"
             >
             """
-            self.source['saveImage'] = "item.%image% = `assets/img/items/${(<string>item.%pk_field%)}.jpg`"
+            self.source['saveImage'] = "item.%image% = `assets/img/items/${(<string>item."+pk_field+")}.jpg`"
         else:
             self.source['img_tag'] = ''
             self.source['saveImage'] = ''
@@ -108,13 +109,13 @@ class FrontendGenerator(BaseGenerator):
             'label-colors',
             {}
         )
-        return result
+        return table
 
     def util_folder(self):
         return os.path.join('app', 'shared')
 
     def is_bundle(self, path, file_name):
-        if file_name == 'app.routes.ts':
+        if file_name in ['app.routes.ts', 'app.module.ts']:
             return True
         path = os.path.split(path)[-1]
         if path == 'header' and file_name == 'header.component.html':
