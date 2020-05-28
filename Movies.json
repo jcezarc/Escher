@@ -6,13 +6,19 @@
             "field_list": {
                 "name": "str",
                 "gender": "str",
-                "age": "int",
+                "age": "str",
                 "photo": "str"
             },
             "Angular":{
                 "title": "name",
                 "image": "photo",
                 "label": "age",
+                "label-colors":{
+                    "red": "< 18",
+                    "yellow": "18 - 29",
+                    "green": "30 - 49",
+                    "blue": "50 >"
+                },
                 "detail": "gender"
             }
         },
@@ -41,16 +47,23 @@
         },
         {
             "table": "Review",
-            "pk_field": "idReview",
+            "pk_field": "Comment",
             "field_list": {
-                "idReview": "int",
-                "Exhibition": "date",
-                "Rating": "float"
+                "Exhibition": "Comment",
+                "Rating": "str",
+                "viewer": "str",
+                "movie": "str"
             },
             "Angular": {
                 "title": "Exhibition",
-                "label": "idReview",
-                "detail": "Rating"
+                "label": "Rating",
+                "label-colors": {
+                    "green": "really enjoyed",
+                    "blue": "I liked it",
+                    "yellow": "did not like",
+                    "red": "I hated it"
+                },
+                "detail": "viewer"
             },
             "nested": {
                 "viewer": "User",

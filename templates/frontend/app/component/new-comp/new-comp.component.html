@@ -16,10 +16,7 @@
                 <div class="col">
                     <label>%label%:</label>
                     <select formControlName="%label%">
-                        <option value="1">%value_blue%</option>
-                        <option value="2">%value_green%</option>
-                        <option value="3">%value_yellow%</option>
-                        <option value="4">%value_red%</option>
+%options%
                     </select>
                 </div>
                 <div class="col">
@@ -31,7 +28,7 @@
             <div class=" form-group">
                 <button (click)="%table%List.save(%table%Form.value)" type="button" [disabled]="!%table%Form.valid" 
                 class="btn btn-info btn-block">
-                  Gravar %table%
+                  Save %table%
                 </button>
             </div>
     

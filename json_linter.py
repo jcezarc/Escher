@@ -93,7 +93,9 @@ class JSonLinter:
         return 0
 
     def compare_configs(self, source, defaults):
-        source.update(defaults)
+        for key in defaults:
+            if key not in source:
+                source[key] = defaults[key]
         for key in source:
             if key not in defaults:
                 return 15, key

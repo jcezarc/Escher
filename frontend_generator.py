@@ -46,7 +46,9 @@ class FrontendGenerator(BaseGenerator):
                         'comp-list.component.ts',
                     ],
                     'new-comp': [
-                        'new-comp.component.html',
+                        ('new-comp.component.html',{
+                            'options': 'options-new.html'
+                        }),
                         'new-comp.component.ts'
                     ],
                     '': [
@@ -91,7 +93,7 @@ class FrontendGenerator(BaseGenerator):
     def extract_table_info(self, obj):
         table = super().extract_table_info(obj)
         pk_field = obj['pk_field']
-        angular_data = obj.pop('Angular', {})
+        angular_data = obj.get('Angular', {})
         if 'image' in angular_data:
             self.source['img_tag'] = f"""
             <img [src]="{table}.%image%" 
@@ -105,10 +107,12 @@ class FrontendGenerator(BaseGenerator):
             self.source['saveImage'] = ''
         for key in ANGULAR_KEYS:
             self.source[key] = angular_data.get(key, '')
-        self.source['colors'] = angular_data.get(
+        colors_angular = angular_data.get(
             'label-colors',
             {}
         )
+        self.source['colors'] = colors_angular
+        self.source['options'] = colors_angular
         return table
 
     def util_folder(self):
