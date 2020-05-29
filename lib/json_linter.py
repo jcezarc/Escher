@@ -6,24 +6,46 @@ from lib.db_defaults import default_params
 
 FIELD_TYPES = ['str', 'int', 'float', 'date']
 
+ERR_INVALID_JFILE = 1
+ERR_NO_TABLE_LIST = 2
+ERR_TABLE_ELEMENT = 3
+ERR_REQ_FIELD_LST = 4
+ERR_INCORRECT_ANG = 5
+ERR_REQ_FIELD_ANG = 6
+ERR_FLIST_NO_DICT = 7
+ERR_UNKNOWN_FTYPE = 8
+ERR_ANG_NOT_IN_FL = 9
+ERR_NES_NOT_IN_FL = 10
+ERR_PKF_NOT_IN_FL = 11
+ERR_NES_MATCH_TBL = 12
+ERR_NES_CIRCL_REF = 13
+ERR_NO_DBTYPE_KEY = 14
+ERR_UNKNOW_DBTYPE = 15
+ERR_DBTYPE_NODICT = 16
+ERR_DBTYPE_UPARAM = 17
+ERR_DBTYPE_PVALUE = 18
+
+
 LINTER_ERRRORS = {
     0: 'No errors',
-    1: 'Invalid JSON file.',
-    2: '"tables" key not found',
-    3: 'Missing required fields',
-    4: 'Incorret value for "Angular" key',
-    5: 'Missing required Angular fields',
-    6: '"field_list" is not the expected type',
-    7: 'Unknown field type in "field_list"',
-    8: 'Angular field is not contained in the field_list',
-    9: 'Nested field is not contained in the field_list',
-    10: '"pk_field" is not contained in the field_list',
-    11: 'Nested table does not match any given table',
-    12: 'A nested table cannot point to itself',
-    13: '"db_type" key not found',
-    14: 'Unknown db_type',
-    15: 'db_config: Unknown param ',
-    16: 'db_config: Incorrect value in ',
+    ERR_INVALID_JFILE: 'Invalid JSON file.',
+    ERR_NO_TABLE_LIST: 'Missing or incorrect "tables" key.',
+    ERR_TABLE_ELEMENT: 'Invalid "table" element of "tables" list.',
+    ERR_REQ_FIELD_LST: 'Missing required fields',
+    ERR_INCORRECT_ANG: 'Incorret value for "Angular" key',
+    ERR_REQ_FIELD_ANG: 'Missing required Angular fields',
+    ERR_FLIST_NO_DICT: '"field_list" is not the expected type',
+    ERR_UNKNOWN_FTYPE: 'Unknown field type in "field_list"',
+    ERR_ANG_NOT_IN_FL: 'Angular field is not contained in the field_list',
+    ERR_NES_NOT_IN_FL: 'Nested field is not contained in the field_list',
+    ERR_PKF_NOT_IN_FL: '"pk_field" is not contained in the field_list',
+    ERR_NES_MATCH_TBL: 'Nested table does not match any given table',
+    ERR_NES_CIRCL_REF: 'A nested table cannot point to itself',
+    ERR_NO_DBTYPE_KEY: '"db_type" key not found',
+    ERR_UNKNOW_DBTYPE: 'Unknown db_type',
+    ERR_DBTYPE_NODICT: 'db_config is not the expected type',
+    ERR_DBTYPE_UPARAM: 'db_config: Unknown param ',
+    ERR_DBTYPE_PVALUE: 'db_config: Incorrect value in ',
 }
 
 class JSonLinter:
@@ -33,7 +55,7 @@ class JSonLinter:
             self.load_json()
         except JSONDecodeError:
             self.data = None
-            self.error_code = 1
+            self.error_code = ERR_INVALID_JFILE
             return
         self.error_code = 0
         self.field_list = None
@@ -86,10 +108,10 @@ class JSonLinter:
                 target = nested[field]
                 if target not in self.table_names:
                     self.curr_field = field
-                    return 11
+                    return ERR_NES_MATCH_TBL
                 if target == table:
                     self.curr_field = field
-                    return 12
+                    return ERR_NES_CIRCL_REF
         return 0
 
     def compare_configs(self, source, defaults):
@@ -98,55 +120,59 @@ class JSonLinter:
                 source[key] = defaults[key]
         for key in source:
             if key not in defaults:
-                return 15, key
+                return ERR_DBTYPE_UPARAM, key
             value = source[key]
             if not value:
-                return 16, key
+                return ERR_DBTYPE_PVALUE, key
         return 0, ""
 
     def __get_error(self):
         tables = self.data.get('tables')
         if not tables:
-            return 2
+            return ERR_NO_TABLE_LIST
         for table in tables:
-            self.curr_table = table['table']
-            if not self.required_fields(table, JSON_KEYS, 'nested'):
-                return 3
+            self.curr_table = table.get('table')
+            if not self.curr_table:
+                return ERR_TABLE_ELEMENT
+            if not self.required_fields(table, JSON_KEYS, ignore='nested'):
+                return ERR_REQ_FIELD_LST
             angular_data = table.get('Angular')
             if not isinstance(angular_data, dict):
-                return 4
-            if not self.required_fields(angular_data, ANGULAR_KEYS, 'image'):
-                return 5
+                return ERR_INCORRECT_ANG
+            if not self.required_fields(angular_data, ANGULAR_KEYS, ignore='image'):
+                return ERR_REQ_FIELD_ANG
             self.field_list = table['field_list']
             if not isinstance(self.field_list, dict):
-                return 6
+                return ERR_FLIST_NO_DICT
             if not self.is_valid_types():
-                return 7
+                return ERR_UNKNOWN_FTYPE
             if not self.compatible_fields(angular_data, True):
-                return 8
+                return ERR_ANG_NOT_IN_FL
             nested = table.get('nested')
             if isinstance(nested, dict):
                 if not self.compatible_fields(nested, False):
-                    return 9
+                    return ERR_NES_NOT_IN_FL
                 self.nested_list[self.curr_table] = nested
             pk_field = table['pk_field']
             if not self.compatible_fields([pk_field], False):
-                return 10
+                return ERR_PKF_NOT_IN_FL
             self.table_names.append(self.curr_table)
         nested_error = self.check_nesteds()
         if nested_error:
-            return nested_error  ##--- 11 or 12
+            return nested_error
         db_type = self.data.get('db_type')
         if not db_type:
-            return 13
+            return ERR_NO_DBTYPE_KEY
         params_db = default_params(db_type)[0]
         if not params_db:
-            return 14
-        db_config = self.data.get('db_config', {})
+            return ERR_UNKNOW_DBTYPE
+        db_config = self.data.get('db_config')
+        if not isinstance(db_config, dict):
+            return ERR_DBTYPE_NODICT
         config_error, key = self.compare_configs(db_config, params_db)
         if config_error > 0:
             self.curr_field = key
-            return config_error #--- 15 or 16
+            return config_error
         return 0
 
     def analyze(self):
@@ -158,11 +184,11 @@ class JSonLinter:
             self.error_code,
             LINTER_ERRRORS[self.error_code]
         )
-        if self.error_code in range(3, 13):
+        if self.error_code in range(ERR_REQ_FIELD_LST, ERR_NES_CIRCL_REF+1):
             result += ' (table "{}"'.format(self.curr_table)
             if self.curr_field:
                 result += ', field: "{}"'.format(self.curr_field)
             result += ')'
-        if self.error_code > 14:
+        if self.error_code in [ERR_DBTYPE_UPARAM, ERR_DBTYPE_PVALUE]:
             result += '"{}"'.format(self.curr_field)
         return result
