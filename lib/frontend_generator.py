@@ -101,7 +101,7 @@ class FrontendGenerator(BaseGenerator):
                 onerror="this.onerror=null;this.src='assets/img/{table}/default.png'"
             >
             """
-            self.source['saveImage'] = "item.%image% = `assets/img/items/${(<string>item."+pk_field+")}.jpg`"
+            self.source['saveImage'] = "item.%image% = `assets/img/'"+table+"'/${(<string>item."+pk_field+")}.jpg`"
         else:
             self.source['img_tag'] = ''
             self.source['saveImage'] = ''
