@@ -17,7 +17,7 @@ How to use:
     - `nested`: Fields that represent a relationship with other tables (dict with field_name and table_name)
     - `Angular`: See the Angular section of this document.
     - `db_type`: Supported types are: DynamoDB, MongoDB, Neo4J, Postgres and SqlServer
-    - `db_config`: Configuration information specific to your database (such as user, password...) - If in doubt, use the parameter "-\<database name>" on the command line
+    - `db_config`: Configuration information specific to your database (such as user, password...) - If in doubt, use the parameter **--help**
     ```
         python Escher.py --help db_config MongoDB
     ```
