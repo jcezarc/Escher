@@ -1,8 +1,8 @@
 import os
 import json
-from db_defaults import default_params, DB_TYPES, formated_json
-from version import CURR_VERSION
-from key_names import JSON_SAMPLE
+from lib.db_defaults import default_params, DB_TYPES, formated_json
+from lib.version import CURR_VERSION
+from lib.key_names import JSON_SAMPLE
 
 class ArgumentParser:
     def __init__(self, param_list):
@@ -45,9 +45,11 @@ class ArgumentParser:
             else:
                 self.file_name = os.path.splitext(text)[0]
                 if text[0] == '-':
-                    self.funcs = [self.show_error]
+                    self.funcs = [self.show_error_arg]
                     return
                 last_arg = 'J'
+        if last_arg in ['F', 'B'] and not self.file_name:
+            self.funcs = [self.show_error_file]
 
     def show_help(self):
         print(
@@ -74,6 +76,9 @@ class ArgumentParser:
             print('\t', dtype)
 
     def show_db_config(self):
+        if not self.db_type:
+            print('ERROR: Missing db_type')
+            return
         print(f'*** Default config for "{self.db_type}":')
         print(formated_json(
             default_params(self.db_type)[0],
@@ -83,7 +88,7 @@ class ArgumentParser:
 
     def create_empty_json(self):
         if not self.file_name:
-            print('ERROR: Missing JSON file')
+            self.show_error_file()
             return
         result = JSON_SAMPLE
         if self.db_type:
@@ -91,14 +96,19 @@ class ArgumentParser:
             db_config = default_params(self.db_type)[0]
             result['db_config'] = db_config
         content = formated_json(result, num_tabs=0, step=4)
-        with open(self.file_name+'.json', 'w') as f:
+        target = self.file_name+'.json'
+        with open(target, 'w') as f:
             f.write(content)
             f.close()
+        print(f'The "{target}" file was created!')
 
     def exec_funcs(self):
         for func in self.funcs:
             func()
 
-    def show_error(self):
+    def show_error_arg(self):
         bad_argument = self.file_name
         print(f'ERROR: Invalid argument {bad_argument}')
+
+    def show_error_file(self):
+        print('ERROR: Missing JSON file')

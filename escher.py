@@ -1,9 +1,9 @@
 import sys
-from backend_generator import BackendGenerator
-from frontend_generator import FrontendGenerator
-from json_linter import JSonLinter
-from argument_parser import ArgumentParser
-from version import CURR_VERSION
+from lib.backend_generator import BackendGenerator
+from lib.frontend_generator import FrontendGenerator
+from lib.json_linter import JSonLinter
+from lib.argument_parser import ArgumentParser
+from lib.version import CURR_VERSION
 
 def main():
     if len(sys.argv) < 2:
@@ -16,7 +16,7 @@ def main():
             Example:
             > python Escher.py Movies.json
 
-            * for more help, use --help argument.
+            * for more help, use --help
             """.format(
                 CURR_VERSION
             )

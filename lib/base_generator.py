@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import shutil
-from key_names import JSON_KEYS
+from lib.key_names import JSON_KEYS
 
 class BaseGenerator:
 

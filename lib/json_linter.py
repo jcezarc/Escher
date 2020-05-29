@@ -1,8 +1,8 @@
 import os
 import json
 from json.decoder import JSONDecodeError
-from key_names import JSON_KEYS, ANGULAR_KEYS
-from db_defaults import default_params
+from lib.key_names import JSON_KEYS, ANGULAR_KEYS
+from lib.db_defaults import default_params
 
 FIELD_TYPES = ['str', 'int', 'float', 'date']
 

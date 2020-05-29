@@ -1,6 +1,6 @@
 import os
-from base_generator import BaseGenerator
-from db_defaults import default_params, formated_json
+from lib.base_generator import BaseGenerator
+from lib.db_defaults import default_params, formated_json
 
 PK_ATTRIB = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
 
