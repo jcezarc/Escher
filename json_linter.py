@@ -43,7 +43,7 @@ class JSonLinter:
         self.curr_field = ''
 
     def load_json(self):
-        with open(self.file_name, 'r') as f:
+        with open(self.file_name+'.json', 'r') as f:
             text = f.read()
             f.close()
         self.data = json.loads(text)

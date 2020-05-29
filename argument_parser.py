@@ -43,7 +43,10 @@ class ArgumentParser:
             elif last_arg in ['C', 'J']:
                 self.db_type = text
             else:
-                self.file_name = os.path.splitext(text)[0] + '.json'
+                self.file_name = os.path.splitext(text)[0]
+                if text[0] == '-':
+                    self.funcs = [self.show_error]
+                    return
                 last_arg = 'J'
 
     def show_help(self):
@@ -88,10 +91,14 @@ class ArgumentParser:
             db_config = default_params(self.db_type)[0]
             result['db_config'] = db_config
         content = formated_json(result, num_tabs=0, step=4)
-        with open(self.file_name, 'w') as f:
+        with open(self.file_name+'.json', 'w') as f:
             f.write(content)
             f.close()
 
     def exec_funcs(self):
         for func in self.funcs:
             func()
+
+    def show_error(self):
+        bad_argument = self.file_name
+        print(f'ERROR: Invalid argument {bad_argument}')

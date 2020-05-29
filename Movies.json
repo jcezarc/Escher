@@ -47,15 +47,15 @@
         },
         {
             "table": "Review",
-            "pk_field": "Comment",
+            "pk_field": "Comments",
             "field_list": {
-                "Exhibition": "Comment",
+                "Comments": "str",
                 "Rating": "str",
                 "viewer": "str",
                 "movie": "str"
             },
             "Angular": {
-                "title": "Exhibition",
+                "title": "Comments",
                 "label": "Rating",
                 "label-colors": {
                     "green": "really enjoyed",
