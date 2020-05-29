@@ -12,15 +12,22 @@ How to use:
 * JSON file
     - `tables`: Contains the list of tables used in your APP
     - `table`: A table name from your database
-    - `field_list`: A list of all field names that are not primary keys
+    - `field_list`: List of all table field names and their types (See the types below).
     - `pk_field`: Name of the field that is the table's primary key
-    - `nested`: Fields that represent a relationship with other tables (you must list the NAMES of those tables)
+    - `nested`: Fields that represent a relationship with other tables (dict with field_name and table_name)
+    - `Angular`: See the Angular section of this document.
     - `db_type`: Supported types are: DynamoDB, MongoDB, Neo4J, Postgres and SqlServer
     - `db_config`: Configuration information specific to your database (such as user, password...) - If in doubt, use the parameter "-\<database name>" on the command line
     ```
-        python Escher.py -dynamoDB
+        python Escher.py --help db_config MongoDB
     ```
 
+    > Field types:
+    * `str`
+    * `int`
+    * `date`
+    * `float`
+    ---
 * Requirements: 
 
     The _requirements.txt_ file has a lot that you may not need to use:
@@ -53,7 +60,34 @@ When running the generated APP, you can access the swagger documentation in the 
 
 
 ## Angular pages
-((((under development))))
+Escher produces a draft of your website based on data from the "Angular" key in the JSON file.
+<div class="panel panel-danger">
+
+> Angular pages will be made to communicate with the generated backend.
+
+
+| Angular key | Content       |
+|------------:|:--------------|
+|  title      | Field whose text will appear highlighted for each record |
+|  label      | Field that will be used to categorize the type of data presented |
+| label-colors  | Predefined values of the label field that show each type in a different color (see below). |
+|  detail     | Field with informational text |
+|  image      | Field with the path to the image that represents the record. |
+
+> ### **label-colors**
+- `blue` -- Name of the label field that will appear in blue.
+- `green` -- Name of the label field that will appear in green.
+- `yellow` -- Name of the label field that will appear in yellow.
+- `red` -- Name of the label field that will appear in red.
+
+## Arguments
+You can generate only your project's frontend or backend
+<br>
+using the **_--frontend_** or **_--backend_** arguments.
+<br>
+<br>
+It is also possible to create a blank JSON file for use with Escher, <br>
+with the **_--new_** option.
 
 ---
 

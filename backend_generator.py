@@ -1,6 +1,6 @@
 import os
 from base_generator import BaseGenerator
-from db_defaults import default_params
+from db_defaults import default_params, formated_json
 
 PK_ATTRIB = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
 
@@ -76,23 +76,6 @@ class BackendGenerator(BaseGenerator):
             return text.replace('_comp', '_'+table)
         return text
 
-    def formated_json_config(self):
-        def indentation(num_tabs):
-            return '\t' * num_tabs
-        result = '{'
-        for key in self.db_config:
-            value = self.db_config[key]
-            result += '\n{}"{}": "{}",'.format(
-                indentation(4),
-                key,
-                value
-            )
-        result += '\n{}{}'.format(
-            indentation(3),
-            '}'
-        )
-        return result
-
     def get_field_attrib(self, field_name):
         pk_field = self.source['pk_field']
         if field_name == pk_field:
@@ -112,7 +95,7 @@ class BackendGenerator(BaseGenerator):
             'date': '"2020-05-24"',
             'float': '0.00'
         }[type_of_pk]
-        self.source['extra'] = self.formated_json_config()
+        self.source['extra'] = formated_json(self.db_config)
         self.source[IMP_DAO] = self.dao_info[IMP_DAO]
         self.source[DAO_CLS] = self.dao_info[DAO_CLS]
         self.source.setdefault('nested', {})

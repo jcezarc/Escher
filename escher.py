@@ -2,8 +2,8 @@ import sys
 from backend_generator import BackendGenerator
 from frontend_generator import FrontendGenerator
 from json_linter import JSonLinter
-
-CURR_VERSION = 'v 1.200.528 R 13.24'
+from argument_parser import ArgumentParser
+from version import CURR_VERSION
 
 def main():
     if len(sys.argv) < 2:
@@ -15,22 +15,30 @@ def main():
 
             Example:
             > python Escher.py Movies.json
+
+            * for more help, use --help argument.
             """.format(
                 CURR_VERSION
             )
         )
         return
-    linter = JSonLinter(sys.argv[1])
+    parser = ArgumentParser(sys.argv)
+    if parser.funcs:
+        parser.exec_funcs()
+        return
+    linter = JSonLinter(parser.file_name)
     linter.analyze()
     if linter.error_code > 0:
         print(linter.error_message())
         return
-    back = BackendGenerator(linter)
-    front = FrontendGenerator(linter)
-    print('--- Backend ---')
-    back.exec()
-    print('\n--- Frontend ---')
-    front.exec()
+    if parser.backend:
+        back = BackendGenerator(linter)
+        print('--- Backend ---')
+        back.run()
+    if parser.frontend:
+        front = FrontendGenerator(linter)
+        print('\n--- Frontend ---')
+        front.run()
     print('\nSuccess!')
 
 main()

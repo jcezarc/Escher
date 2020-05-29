@@ -28,7 +28,7 @@ LINTER_ERRRORS = {
 
 class JSonLinter:
     def __init__(self, file_name):
-        self.file_name = os.path.splitext(file_name)[0]
+        self.file_name = file_name
         try:
             self.load_json()
         except JSONDecodeError:
@@ -43,7 +43,7 @@ class JSonLinter:
         self.curr_field = ''
 
     def load_json(self):
-        with open(self.file_name+'.json', 'r') as f:
+        with open(self.file_name, 'r') as f:
             text = f.read()
             f.close()
         self.data = json.loads(text)

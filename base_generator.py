@@ -209,7 +209,7 @@ class BaseGenerator:
                 paths=[path]
             )
 
-    def exec(self):
+    def run(self):
         for table in self.tables:
             self.source = {}
             table_name = self.extract_table_info(table)
