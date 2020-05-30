@@ -3,10 +3,12 @@
         <form [formGroup]="searchForm" class="form-inline">
             <input type="text" formControlName="searchContent" class="form-control">
             <button (click)="emitFilterEvent(searchForm.value)" class="btn btn-light" type="button">
-                <img src="assets/img/btn/search_icon.png" width="20">
+                <!-- <img src="assets/img/btn/search_icon.png" width="20"> -->
+                <i class="fa fa-search"></i>
             </button>
             <button (click)="emitAddEvent()" class="btn btn-light" type="button">
-                <img src="assets/img/btn/add_new.png" width="20">
+                <!-- <img src="assets/img/btn/add_new.png" width="20"> -->
+                <i class="fa fa-plus"></i>
             </button>
         </form>
     </div> 

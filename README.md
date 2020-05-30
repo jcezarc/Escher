@@ -36,16 +36,25 @@ How to use:
     - psycopg2 - Postgres only
     - pymongo
     - pyodbc - SqlServer only
+    
+    --For Angular, you must install **`font-awesome`**.
 
 ## What is produced?
 
 After running Escher with a valid JSON file, a folder with the same name as that file will be created.
 Inside, you will find:
 
+**...backend**
 * The `model` folder with the definitions of a table and its fields
 * The `resource` folder for classes that will respond to requests for multiple records (all*.py files) and for requests with parameters that affect only one record (files *by_id.py)
 * The `service` folder with the classes that will take the data from the database to the request classes (/ resource).
 * The `tests` folder that will contain the unit tests to check if the services are behaving as expected.
+
+**...frontend**
+* `...-item` : Component that shows each record in table.
+* `...-list` : The set of components "item" with a search bar above.
+* `new-...`: A form component for saving the table record.
+
 
 
 ## Swagger Documentation
@@ -68,11 +77,17 @@ Escher produces a draft of your website based on data from the "Angular" key in 
 
 | Angular key | Content       |
 |------------:|:--------------|
-|  title      | Field whose text will appear highlighted for each record |
-|  label      | Field that will be used to categorize the type of data presented |
+| title      | Field whose text will appear highlighted for each record |
+| label      | Field that will be used to categorize the type of data presented |
 | label-colors  | Predefined values of the label field that show each type in a different color (see below). |
-|  detail     | Field with informational text |
-|  image      | Field with the path to the image that represents the record. |
+| detail     | Field with informational text |
+| **image**      | Field with the path to the image that represents the record. |
+
+(*) -- `You must place the images in`
+**`assets/img/<table name>`**
+
+<br>
+
 
 > ### **label-colors**
 - `blue` -- Name of the label field that will appear in blue.
