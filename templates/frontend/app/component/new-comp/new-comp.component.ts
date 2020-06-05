@@ -3,6 +3,7 @@ import { %table%Model } from '../%table%-model';
 import { %table%Service } from '../%table%-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+%new-nested_import%
 
 @Component({
   selector: 'app-new-%table%',

@@ -3,6 +3,7 @@ import { %table%Model } from '../%table%-model';
 import { %table%Service } from '../%table%-service';
 import { Router } from '@angular/router';
 import {RespJsonFlask} from '../../app.api'
+%nested_import-list%
 
 @Component({
   selector: 'app-%table%-list',
@@ -50,12 +51,13 @@ export class %table%ListComponent implements OnInit {
 
   save(item: %table%Model){
     %saveImage%
+    %save_nesteds%
     this.%table%Svc.save%table%(item)
     this.items.push(item)
   }
 
   select(item: %table%Model){
-    this.%table%Svc.current%table% = item
+    %table%Service.current%table% = item
     this.router.navigate(['/new-%nesting_ref%'])
   }
 

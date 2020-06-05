@@ -27,7 +27,6 @@
             "pk_field": "name",
             "field_list": {
                 "name": "str",
-                "director": "str",
                 "txSynopsis": "str",
                 "genre": "str",
                 "poster": "str"

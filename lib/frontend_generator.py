@@ -48,17 +48,21 @@ class FrontendGenerator(BaseGenerator):
                     ],
                     'comp-list': [
                         'comp-list.component.html',
-                        'comp-list.component.ts',
+                        ('comp-list.component.ts',{
+                            'save_nesteds': 'nested-save.ts',
+                            'nested_import-list': 'nested-list.import.ts'
+                        }),
                     ],
                     'new-comp': [
                         ('new-comp.component.html',{
                             'options': 'options-new.html',
-                            'form_fields': 'field_list-form.html',
+                            'form_fields': 'input_fields-form.html',
                             'form_nested': 'nested-form.html'
                         }),
                         ('new-comp.component.ts',{
                             'new-field_list': 'field_list-new.ts',
-                            'new-nested': 'nested-new.ts'
+                            'new-nested': 'nested-new.ts',
+                            'new-nested_import': 'nested-new.import.ts'
                         })
                     ],
                     '': [
@@ -118,32 +122,38 @@ class FrontendGenerator(BaseGenerator):
             self.source['saveImage'] = ''
         for key in ANGULAR_KEYS:
             self.source[key] = angular_data.get(key, '')
-        colors_angular = angular_data.get(
-            'label-colors',
-            {}
-        )
-        if colors_angular:
-            self.source['pre-option'] = '''
+        label_field = angular_data.get('label')
+        if label_field is None:
+            colors_angular = {}
+        else:
+            colors_angular = angular_data.get(
+                'label-colors',
+                {}
+            )
+        input_fields = self.source['field_list'].copy()
+        if colors_angular:            
+            input_fields.pop(label_field)
+            self.source['pre-option'] = f'''
                 <div class="col">
-                    <label>%label%:</label>
-                    <select formControlName="%label%">
+                    <label>{label_field}:</label>
+                    <select formControlName="{label_field}">
             '''
             self.source['pos-option'] = '''
-                        </select>
-                    </div>
+                    </select>
                 </div>
             '''
         else:
             self.source['pre-option'] = ''
             self.source['pos-option'] = ''
+        self.source['input_fields'] = input_fields
         self.source['colors'] = colors_angular
         self.source['options'] = colors_angular
         ref = self.nesting_reference(table)
         if ref:
-            self.source['export_button'] = """
+            self.source['export_button'] = f"""
                         <button 
                         style="border: none;background-color: transparent;margin-left: 10%;"
-                        (click)="select(%table%)">
+                        (click)="select({table})">
                             <i class="fa fa-check-circle-o"></i>
                         </button>
             """
