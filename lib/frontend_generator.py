@@ -161,13 +161,17 @@ class FrontendGenerator(BaseGenerator):
         self.source['other'] = other_labels
         ref = self.nesting_reference(table)
         if ref:
-            self.source['export_button'] = f"""
+            self.source['export_button'] = """
                         <button 
                         style="border: none;background-color: transparent;margin-left: 10%;"
-                        (click)="select({table})">
-                            <i class="fa fa-check-circle-o"></i>
+                        (click)="select({})">
+                            <i class="fa fa-check-circle-o"
+                            data-toggle="tooltip" title="Select {} for {}"></i>
                         </button>
-            """
+            """.format(
+                table,
+                table, ref['table']
+            )
             self.source['nesting_ref'] = ref['table']
         else:
             self.source['export_button'] = ''

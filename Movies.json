@@ -51,6 +51,7 @@
                 "Comments": "str"
             },
             "Angular": {
+                "image": "movie.poster",
                 "title": "Comments",
                 "label": "movie",
                 "detail": "viewer"

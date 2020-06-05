@@ -86,22 +86,37 @@ class JSonLinter:
                 return False
         return True
 
-    def incompatible_fields(self, dataset, rule, compare_list):
-        if not compare_list:
-            return True
-        cl = compare_list
+    def foreign_table(self, nested):
+        expr = self.curr_field.split('.')
+        try:
+            table = nested[expr[0]]
+            key = expr[-1]
+            flist = self.transform[table]['field_list']
+            return key in flist
+        except KeyError:
+            return False
+        
+
+    def incompatible_fields(self, dataset, rule, nested={}):
+        fl = self.field_list
         func = {
-            'key_in': lambda k, d: k in cl,
-            'value_in': lambda k, d: d[k] in cl,
-            'key_not_in': lambda k, d: k not in cl
+            'key_in': lambda k, d: k in fl,
+            'value_in': lambda k, d: d[k] in fl,
+            'key_not_in': lambda k, d: k not in fl
         }[rule]
         for key in dataset:
+            if rule == 'value_in':
+                value = dataset[key]
+                self.curr_field = value
+                if '.' in value and self.foreign_table(nested):
+                    continue
+            else:
+                self.curr_field = key
             if not func(key, dataset):
-                if rule == 'value_in':
-                    self.curr_field = dataset[key]
-                else:
-                    self.curr_field = key
+                if self.curr_field in nested:
+                    continue
                 return True
+        self.curr_field
         return False
 
     def check_nesteds(self):
@@ -151,17 +166,17 @@ class JSonLinter:
                 return ERR_UNKNOWN_FTYPE
             nested = table.get('nested')
             if isinstance(nested, dict):
-                if self.incompatible_fields(nested, 'key_not_in', self.field_list):
+                if self.incompatible_fields(nested, 'key_not_in'):
                     return ERR_NES_ALRD_EXST
             d = angular_data
             ng = {i:d[i] for i in d if i != 'label-colors'}
-            if self.incompatible_fields(ng, 'value_in', self.field_list):
-                if self.curr_field not in nested:
-                    return ERR_ANG_NOT_IN_FL
+            if self.incompatible_fields(ng, 'value_in', nested):
+                return ERR_ANG_NOT_IN_FL
             pk_field = table['pk_field']
-            if self.incompatible_fields([pk_field], 'key_in', self.field_list):
+            if self.incompatible_fields([pk_field], 'key_in'):
                 return ERR_PKF_NOT_IN_FL
             self.transform[self.curr_table] = {
+                'field_list': self.field_list,
                 'nested': nested,
                 'Angular': angular_data
             }
