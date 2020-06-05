@@ -46,23 +46,14 @@
             }
         },
         {
-            "table": "Review",
+            "table": "Recommend",
             "pk_field": "Comments",
             "field_list": {
-                "Comments": "str",
-                "Rating": "str",
-                "viewer": "str",
-                "movie": "str"
+                "Comments": "str"
             },
             "Angular": {
                 "title": "Comments",
-                "label": "Rating",
-                "label-colors": {
-                    "green": "really enjoyed",
-                    "blue": "I liked it",
-                    "yellow": "did not like",
-                    "red": "I hated it"
-                },
+                "label": "movie",
                 "detail": "viewer"
             },
             "nested": {
@@ -74,7 +65,7 @@
     "db_type": "Neo4J",
     "db_config": {
         "user": "neo4j",
-        "host": "e-X45XUiH.gcp-neo4j-sandbox.com",
-        "password": "myPasswordXXX"
+        "host": "localhost",
+        "password": "1234"
     }
 }

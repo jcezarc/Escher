@@ -10,7 +10,7 @@ import {RespJsonFlask} from '../../app.api'
 })
 export class %table%ListComponent implements OnInit {
 
-  items: %table%Model[]
+  items: %table%Model[] = []
 
   constructor(
     private %table%Svc: %table%Service,
@@ -52,6 +52,11 @@ export class %table%ListComponent implements OnInit {
     %saveImage%
     this.%table%Svc.save%table%(item)
     this.items.push(item)
+  }
+
+  select(item: %table%Model){
+    this.%table%Svc.current%table% = item
+    this.router.navigate(['/new-%nesting_ref%'])
   }
 
 }

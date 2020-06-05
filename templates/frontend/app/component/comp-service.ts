@@ -10,6 +10,16 @@ const %table%_API = 'http://localhost:5000/%API_name%/%table%'
 @Injectable()
 export class %table%Service{
 
+    static current%table%: %table%Model
+
+    static getCurr%table%(){
+        if(%table%Service.current%table%){
+            return %table%Service.current%table%.%title%
+        }else{
+            return ''
+        }
+    }
+
     constructor(private http: Http){
     }
 

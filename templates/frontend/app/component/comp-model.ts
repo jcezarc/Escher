@@ -1,5 +1,6 @@
 
 
 export interface %table%Model{
-%fieldList%    
+%fieldList%
+%nested_fields%
 }

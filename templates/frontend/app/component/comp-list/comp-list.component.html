@@ -1,8 +1,16 @@
 <div class="row">
   <div *ngFor="let %table% of Navigator.view(items)" class="col-sm-6 col-xs-12">
     <app-%table%-item [%table%]="%table%">
-          <app-delete-button (delete)="remove(%table%)">
-          </app-delete-button>
+          <div>
+              <app-delete-button (delete)="remove(%table%)">
+              </app-delete-button>
+              <button
+              style="border: none;background-color: transparent;margin-left: 10%;"
+              (click)="select(%table%)">
+              >
+                <i class="fa fa-check-circle-o"></i>
+              </button>
+          </div>
     </app-%table%-item>
   </div>
 </div>

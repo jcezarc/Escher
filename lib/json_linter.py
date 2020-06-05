@@ -15,7 +15,7 @@ ERR_REQ_FIELD_ANG = 6
 ERR_FLIST_NO_DICT = 7
 ERR_UNKNOWN_FTYPE = 8
 ERR_ANG_NOT_IN_FL = 9
-ERR_NES_NOT_IN_FL = 10
+ERR_NES_ALRD_EXST = 10
 ERR_PKF_NOT_IN_FL = 11
 ERR_NES_MATCH_TBL = 12
 ERR_NES_CIRCL_REF = 13
@@ -37,7 +37,7 @@ LINTER_ERRRORS = {
     ERR_FLIST_NO_DICT: '"field_list" is not the expected type',
     ERR_UNKNOWN_FTYPE: 'Unknown field type in "field_list"',
     ERR_ANG_NOT_IN_FL: 'Angular field is not contained in the field_list',
-    ERR_NES_NOT_IN_FL: 'Nested field is not contained in the field_list',
+    ERR_NES_ALRD_EXST: 'Nested field already exists in the field_list',
     ERR_PKF_NOT_IN_FL: '"pk_field" is not contained in the field_list',
     ERR_NES_MATCH_TBL: 'Nested table does not match any given table',
     ERR_NES_CIRCL_REF: 'A nested table cannot point to itself',
@@ -59,8 +59,7 @@ class JSonLinter:
             return
         self.error_code = 0
         self.field_list = None
-        self.table_names = []
-        self.nested_list = {}
+        self.transform = {}
         self.curr_table = ''
         self.curr_field = ''
 
@@ -87,26 +86,30 @@ class JSonLinter:
                 return False
         return True
 
-    def compatible_fields(self, dataset, from_value):
+    def incompatible_fields(self, dataset, rule, compare_list):
+        if not compare_list:
+            return True
+        cl = compare_list
+        func = {
+            'key_in': lambda k, d: k in cl,
+            'value_in': lambda k, d: d[k] in cl,
+            'key_not_in': lambda k, d: k not in cl
+        }[rule]
         for key in dataset:
-            if from_value:
-                value = dataset[key]
-                if not isinstance(value, str):
-                    continue
-                if value not in self.field_list:
-                    self.curr_field = value
-                    return False
-            elif key not in self.field_list:
-                self.curr_field = key
-                return False
-        return True
+            if not func(key, dataset):
+                if rule == 'value_in':
+                    self.curr_field = dataset[key]
+                else:
+                    self.curr_field = key
+                return True
+        return False
 
     def check_nesteds(self):
-        for table in self.nested_list:
-            nested = self.nested_list[table]
+        for table in self.transform:
+            nested = self.transform[table].get('nested') or {}
             for field in nested:
                 target = nested[field]
-                if target not in self.table_names:
+                if target not in self.transform:
                     self.curr_field = field
                     return ERR_NES_MATCH_TBL
                 if target == table:
@@ -146,17 +149,22 @@ class JSonLinter:
                 return ERR_FLIST_NO_DICT
             if not self.is_valid_types():
                 return ERR_UNKNOWN_FTYPE
-            if not self.compatible_fields(angular_data, True):
-                return ERR_ANG_NOT_IN_FL
             nested = table.get('nested')
             if isinstance(nested, dict):
-                if not self.compatible_fields(nested, False):
-                    return ERR_NES_NOT_IN_FL
-                self.nested_list[self.curr_table] = nested
+                if self.incompatible_fields(nested, 'key_not_in', self.field_list):
+                    return ERR_NES_ALRD_EXST
+            d = angular_data
+            ng = {i:d[i] for i in d if i != 'label-colors'}
+            if self.incompatible_fields(ng, 'value_in', self.field_list):
+                if self.curr_field not in nested:
+                    return ERR_ANG_NOT_IN_FL
             pk_field = table['pk_field']
-            if not self.compatible_fields([pk_field], False):
+            if self.incompatible_fields([pk_field], 'key_in', self.field_list):
                 return ERR_PKF_NOT_IN_FL
-            self.table_names.append(self.curr_table)
+            self.transform[self.curr_table] = {
+                'nested': nested,
+                'Angular': angular_data
+            }
         nested_error = self.check_nesteds()
         if nested_error:
             return nested_error

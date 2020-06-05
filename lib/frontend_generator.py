@@ -5,6 +5,10 @@ from lib.key_names import ANGULAR_KEYS
 
 class FrontendGenerator(BaseGenerator):
 
+    def __init__(self, linter):
+        super().__init__(linter)
+        self.transform = linter.transform
+
     def field_type(self, value):
         return {
             'str': 'string',
@@ -37,7 +41,8 @@ class FrontendGenerator(BaseGenerator):
                     'comp-item': [
                         'comp-item.component.css',
                         ('comp-item.component.html',{
-                            'colors': 'colors-label.html'
+                            'colors': 'colors-label.html',
+                            'nested_label': 'nested-label.html'
                         }),
                         'comp-item.component.ts',
                     ],
@@ -47,15 +52,21 @@ class FrontendGenerator(BaseGenerator):
                     ],
                     'new-comp': [
                         ('new-comp.component.html',{
-                            'options': 'options-new.html'
+                            'options': 'options-new.html',
+                            'form_fields': 'field_list-form.html',
+                            'form_nested': 'nested-form.html'
                         }),
-                        'new-comp.component.ts'
+                        ('new-comp.component.ts',{
+                            'new-field_list': 'field_list-new.ts',
+                            'new-nested': 'nested-new.ts'
+                        })
                     ],
                     '': [
                         (
                             'comp-model.ts',
                             {
-                                'fieldList': 'field_list.comp.ts'
+                                'fieldList': 'field_list.comp.ts',
+                                'nested_fields': 'nested-model.ts'
                             }
                         ),
                         'comp-service.ts',
@@ -111,8 +122,36 @@ class FrontendGenerator(BaseGenerator):
             'label-colors',
             {}
         )
+        if colors_angular:
+            self.source['pre-option'] = '''
+                <div class="col">
+                    <label>%label%:</label>
+                    <select formControlName="%label%">
+            '''
+            self.source['pos-option'] = '''
+                        </select>
+                    </div>
+                </div>
+            '''
+        else:
+            self.source['pre-option'] = ''
+            self.source['pos-option'] = ''
         self.source['colors'] = colors_angular
         self.source['options'] = colors_angular
+        ref = self.nesting_reference(table)
+        if ref:
+            self.source['export_button'] = """
+                        <button 
+                        style="border: none;background-color: transparent;margin-left: 10%;"
+                        (click)="select(%table%)">
+                            <i class="fa fa-check-circle-o"></i>
+                        </button>
+            """
+            self.source['nesting_ref'] = ref['table']
+        else:
+            self.source['export_button'] = ''
+            self.source['nesting_ref'] = ''
+        self.source.setdefault('nested', {})
         return table
 
     def util_folder(self):
@@ -127,9 +166,29 @@ class FrontendGenerator(BaseGenerator):
         return False
 
     def get_field_attrib(self, field_name):
-        return {
+        colors = {
             'red': 'danger',
             'yellow': 'warning',
             'green': 'success',
             'blue': 'info',
-        }.get(field_name, '')
+        }
+        if field_name in  colors:
+            return colors[field_name]
+        try:
+            nested = self.source['nested']
+            ref = nested[field_name]
+            result = self.transform[ref]['Angular']['title']
+        except KeyError:
+            result = ''
+        return result
+
+    def nesting_reference(self, subject):
+        for table in self.tables:
+            nested = table.get('nested')
+            if nested is None:
+                continue
+            for key in nested:
+                value = nested[key]
+                if value == subject:
+                    return table
+        return None
