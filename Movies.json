@@ -56,8 +56,8 @@
                 "detail": "viewer"
             },
             "nested": {
-                "viewer": "User",
-                "movie": "Movie"
+                "movie": "Movie",
+                "viewer": "User"
             }
         }
     ],

@@ -42,7 +42,7 @@ class FrontendGenerator(BaseGenerator):
                         'comp-item.component.css',
                         ('comp-item.component.html',{
                             'colors': 'colors-label.html',
-                            'nested_label': 'nested-label.html'
+                            'other': 'other-labels.html'
                         }),
                         'comp-item.component.ts',
                     ],
@@ -130,7 +130,9 @@ class FrontendGenerator(BaseGenerator):
                 'label-colors',
                 {}
             )
+        nested = obj.get('nested', {})
         input_fields = self.source['field_list'].copy()
+        other_labels = {}
         if colors_angular:            
             input_fields.pop(label_field)
             self.source['pre-option'] = f'''
@@ -143,11 +145,20 @@ class FrontendGenerator(BaseGenerator):
                 </div>
             '''
         else:
+            if nested:
+                detail = list(nested.keys())[-1]
+                self.source['detail'] = '{}.{}'.format(
+                    detail,
+                    self.get_field_attrib(detail)
+                )
+                d = nested
+                other_labels = {i:d[i] for i in d if i != detail}
             self.source['pre-option'] = ''
             self.source['pos-option'] = ''
         self.source['input_fields'] = input_fields
         self.source['colors'] = colors_angular
         self.source['options'] = colors_angular
+        self.source['other'] = other_labels
         ref = self.nesting_reference(table)
         if ref:
             self.source['export_button'] = f"""
@@ -161,7 +172,7 @@ class FrontendGenerator(BaseGenerator):
         else:
             self.source['export_button'] = ''
             self.source['nesting_ref'] = ''
-        self.source.setdefault('nested', {})
+        self.source['nested'] = nested
         return table
 
     def util_folder(self):
