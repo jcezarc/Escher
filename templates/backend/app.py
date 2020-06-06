@@ -62,8 +62,7 @@ def get_api():
     """
     generator = FlaskSwaggerGenerator(
         swagger_details,
-        None,
-        %is_SQL%
+        None
     )
     return jsonify(generator.content)
 

@@ -24,6 +24,8 @@ class SqlTable(DbTable):
         if errors:
             return errors
         # ---------------------------
+        d = json_data
+        json_data = {k: self.flatten(k, d[k]) for k in d}
         insert_values = self.statement_columns(json_data, SQL_INSERT_MODE, '{value}')
         field_list = [f'"{field}"' for field in json_data]
         command = 'INSERT INTO "{}"({})VALUES({})'.format(
@@ -36,7 +38,9 @@ class SqlTable(DbTable):
         return None
 
     def update(self, json_data):
-        update_fields = self.statement_columns(json_data,pattern='"{field}"={value}')
+        d = json_data
+        json_data = {k: self.flatten(k, d[k]) for k in d}
+        update_fields = self.statement_columns(json_data, pattern='"{field}"={value}')
         command = 'UPDATE "{}" SET {} WHERE {}'.format(
             self.table_name,
             ','.join(update_fields),
@@ -45,13 +49,15 @@ class SqlTable(DbTable):
         self.session.execute(command)
         self.session.commit()
 
-    def query_elements(self):
-        fields = [f'{self.alias}."{field}"' for field in self.map]
+    def query_elements(self, prefix=''):
+        a = self.alias
+        fields = [f'{a}."{f}" as "{prefix}{f}"' for f in self.map]
         curr_table = '"{}" {}'.format(self.table_name, self.alias)
         expr_join = ''
         for field in self.joins:
             join = self.joins[field]
-            join_fields, join_table, sub_expr = join.query_elements()
+            prefix += join.alias+'__'
+            join_fields, join_table, sub_expr = join.query_elements(prefix)
             join_primary_key = join.alias + '.' + join.pk_fields[0]
             if join_primary_key in join_fields:
                 join_fields.remove(join_primary_key)
@@ -63,6 +69,34 @@ class SqlTable(DbTable):
                 sub_expr
             )
         return fields, curr_table, expr_join
+
+    def flatten(self, key, value):
+        if isinstance(value, dict) and key in self.joins:
+            join = self.joins[key]
+            key = join.pk_fields[0]
+            return value[key]
+        return value
+
+    def inflate(self, value, record, prefix):
+        search = prefix.pop(0)
+        key = search
+        if prefix:
+            for field in self.joins:
+                join = self.joins[field]
+                if join.alias == search:
+                    result = record.get(field)
+                    if not isinstance(result, dict) :
+                        result = {}
+                    key, value = join.inflate(
+                        value,
+                        result,
+                        prefix
+                    )
+                    result[key] = value
+                    key = field
+                    value = result
+                    break
+        return key, value
 
     def find_all(self, limit=0, filter_expr=''):
         fields, curr_table, expr_join = self.query_elements()
@@ -84,8 +118,11 @@ class SqlTable(DbTable):
         for row in dataset.fetchall():
             record = {}
             for item in row.items():
-                key = item[0]
-                value = item[1]
+                key, value = self.inflate(
+                    item[1],
+                    record,
+                    item[0].split('__')
+                )
                 record[key] = str(value)
             result.append(record)
             if len(result) == limit:

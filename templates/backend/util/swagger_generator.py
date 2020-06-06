@@ -27,7 +27,7 @@ class FlaskSwaggerGenerator:
 
     generator = FlaskSwaggerGenerator(swagger_details)
     """
-    def __init__(self, callback_func=None, swagger_info=None, relational_db=False):
+    def __init__(self, callback_func=None, swagger_info=None):
         self.app = current_app
         self.callback = callback_func
         # Monta o Swagger no self.content ...
@@ -39,7 +39,6 @@ class FlaskSwaggerGenerator:
                 "version": "1.0",
                 "title": ""
             })
-        self.relational_db = relational_db
         self.content['paths'] = self.list_routes()
 
     @staticmethod
@@ -192,8 +191,6 @@ class FlaskSwaggerGenerator:
             field = source[key]
             is_array = isinstance(field, List)
             if is_array:
-                if self.relational_db:
-                    continue
                 field = field.inner
             is_integer = isinstance(field, Integer)
             is_float = isinstance(field, Float)
@@ -205,10 +202,7 @@ class FlaskSwaggerGenerator:
             else:
                 date_format = None
             if isinstance(field, Nested):
-                if self.relational_db:
-                    value = self.set_type('number')
-                else:
-                    value = self.schema_to_dict(field.nested._declared_fields)
+                value = self.schema_to_dict(field.nested._declared_fields)
             elif is_integer or is_float or is_decimal:
                 value = self.set_type("number")
             elif isinstance(field, Str) or date_format:

@@ -109,17 +109,22 @@ class FrontendGenerator(BaseGenerator):
         table = super().extract_table_info(obj)
         pk_field = obj['pk_field']
         angular_data = obj.get('Angular', {})
+        self.source['saveImage'] = ''
+        image_field = angular_data['image']
         if 'image' in angular_data:
-            self.source['img_tag'] = f"""
-            <img [src]="{table}.%image%" 
-                class="img-{table}" height="96" 
-                onerror="this.onerror=null;this.src='assets/img/{table}/default.png'"
+            self.source['img_tag'] = """
+            <img [src]="{}.{}" 
+                class="img-{}" height="96" 
             >
-            """
-            self.source['saveImage'] = "item.%image% = `assets/img/"+table+"/${(<string>item."+pk_field+")}.jpg`"
+            """.format(
+                table, image_field,
+                table
+            )
+            if '.' not in image_field:
+                self.source['saveImage'] = "item."+image_field+" = `assets/img/"\
+                    + table + "/${(<string>item." + pk_field + ")}.jpg`"
         else:
             self.source['img_tag'] = ''
-            self.source['saveImage'] = ''
         for key in ANGULAR_KEYS:
             self.source[key] = angular_data.get(key, '')
         label_field = angular_data.get('label')
@@ -153,6 +158,8 @@ class FrontendGenerator(BaseGenerator):
                 )
                 d = nested
                 other_labels = {i:d[i] for i in d if i != detail}
+            elif label_field:
+                other_labels = {label_field: ''}
             self.source['pre-option'] = ''
             self.source['pos-option'] = ''
         self.source['input_fields'] = input_fields
@@ -202,7 +209,7 @@ class FrontendGenerator(BaseGenerator):
         try:
             nested = self.source['nested']
             ref = nested[field_name]
-            result = self.summary[ref]['Angular']['title']
+            result = '.'+self.summary[ref]['Angular']['title']
         except KeyError:
             result = ''
         return result
