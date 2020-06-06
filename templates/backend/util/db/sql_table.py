@@ -56,8 +56,9 @@ class SqlTable(DbTable):
         expr_join = ''
         for field in self.joins:
             join = self.joins[field]
-            prefix += join.alias+'__'
-            join_fields, join_table, sub_expr = join.query_elements(prefix)
+            join_fields, join_table, sub_expr = join.query_elements(
+                prefix+join.alias+'__'
+            )
             join_primary_key = join.alias + '.' + join.pk_fields[0]
             if join_primary_key in join_fields:
                 join_fields.remove(join_primary_key)
