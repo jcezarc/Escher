@@ -123,7 +123,7 @@ class SqlTable(DbTable):
                     record,
                     item[0].split('__')
                 )
-                record[key] = str(value)
+                record[key] = value
             result.append(record)
             if len(result) == limit:
                 break
