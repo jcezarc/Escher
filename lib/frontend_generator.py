@@ -7,7 +7,7 @@ class FrontendGenerator(BaseGenerator):
 
     def __init__(self, linter):
         super().__init__(linter)
-        self.transform = linter.transform
+        self.summary = linter.summary
 
     def field_type(self, value):
         return {
@@ -202,7 +202,7 @@ class FrontendGenerator(BaseGenerator):
         try:
             nested = self.source['nested']
             ref = nested[field_name]
-            result = self.transform[ref]['Angular']['title']
+            result = self.summary[ref]['Angular']['title']
         except KeyError:
             result = ''
         return result

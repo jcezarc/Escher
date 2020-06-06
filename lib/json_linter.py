@@ -59,7 +59,7 @@ class JSonLinter:
             return
         self.error_code = 0
         self.field_list = None
-        self.transform = {}
+        self.summary = {}
         self.curr_table = ''
         self.curr_field = ''
 
@@ -91,7 +91,7 @@ class JSonLinter:
         try:
             table = nested[expr[0]]
             key = expr[-1]
-            flist = self.transform[table]['field_list']
+            flist = self.summary[table]['field_list']
             return key in flist
         except KeyError:
             return False
@@ -116,15 +116,15 @@ class JSonLinter:
                 if self.curr_field in nested:
                     continue
                 return True
-        self.curr_field
+        self.curr_field = ''
         return False
 
     def check_nesteds(self):
-        for table in self.transform:
-            nested = self.transform[table].get('nested') or {}
+        for table in self.summary:
+            nested = self.summary[table].get('nested') or {}
             for field in nested:
                 target = nested[field]
-                if target not in self.transform:
+                if target not in self.summary:
                     self.curr_field = field
                     return ERR_NES_MATCH_TBL
                 if target == table:
@@ -175,7 +175,7 @@ class JSonLinter:
             pk_field = table['pk_field']
             if self.incompatible_fields([pk_field], 'key_in'):
                 return ERR_PKF_NOT_IN_FL
-            self.transform[self.curr_table] = {
+            self.summary[self.curr_table] = {
                 'field_list': self.field_list,
                 'nested': nested,
                 'Angular': angular_data
