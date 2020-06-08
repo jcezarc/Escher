@@ -12,7 +12,7 @@ import {RespJsonFlask} from '../../app.api'
 export class %table%ListComponent implements OnInit {
 
   items: %table%Model[] = []
-
+  
   constructor(
     private %table%Svc: %table%Service,
     private router: Router
@@ -33,6 +33,8 @@ export class %table%ListComponent implements OnInit {
       resp => {
         let obj:RespJsonFlask = (<RespJsonFlask>resp.json())
         this.items = (<%table%Model[]>obj.data)
+      },error => {
+        if(error.status == 404) this.items = []
       }
     )
   }
