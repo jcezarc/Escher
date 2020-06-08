@@ -1,4 +1,5 @@
 <div class="row">
+
   <div *ngFor="let %table% of Navigator.view(items)" class="col-sm-6 col-xs-12">
     <app-%table%-item [%table%]="%table%">
           <div>
@@ -7,8 +8,9 @@
 %export_button%            
           </div>
     </app-%table%-item>
-    <h4 *ngIf="!items" class="jumbotron ml-4">%table% Not found. :(</h4>
   </div>
+  <h4 *ngIf="!items" class="jumbotron ml-4">%table% Not found. :(</h4>
+  
 </div>
 
 <app-navigator 

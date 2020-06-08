@@ -33,8 +33,8 @@ export class %table%ListComponent implements OnInit {
       resp => {
         let obj:RespJsonFlask = (<RespJsonFlask>resp.json())
         this.items = (<%table%Model[]>obj.data)
-      },error => {
-        if(error.status == 404) this.items = []
+      // },error => {
+      //   if(error.status == 404) this.items = []
       }
     )
   }

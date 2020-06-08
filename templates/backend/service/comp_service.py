@@ -1,7 +1,7 @@
 import logging
 from model.%table%_model import %table%Model
 from util.messages import (
-    resp_erro,
+    resp_error,
     resp_not_found,
     resp_post_ok,
     resp_get_ok,
@@ -29,16 +29,16 @@ class %table%Service:
 
     def insert(self, json):
         logging.info('New record write in %table%')
-        erros = self.table.insert(json)
-        if erros:
-            return resp_erro(erros)
+        errors = self.table.insert(json)
+        if errors:
+            return resp_error(errors)
         return resp_post_ok()
 
     def update(self, json):
         logging.info('Changing record of %table% ...')
-        erros = self.table.update(json)
-        if erros:
-            return resp_erro(erros)
+        errors = self.table.update(json)
+        if errors:
+            return resp_error(errors)
         return resp_ok("Record changed OK!")
         
     def delete(self, %pk_field%):
