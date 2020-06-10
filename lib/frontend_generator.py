@@ -110,8 +110,8 @@ class FrontendGenerator(BaseGenerator):
         pk_field = obj['pk_field']
         angular_data = obj.get('Angular', {})
         self.source['saveImage'] = ''
-        image_field = angular_data['image']
         if 'image' in angular_data:
+            image_field = angular_data['image']
             self.source['img_tag'] = """
             <img [src]="{}.{}" 
                 class="img-{}" height="96" 
