@@ -14,27 +14,28 @@ class Neo4Table(DbTable):
             encrypted=False
         )
 
-    def query_elements(self, operator, filter_expr=''):
+    def query_elements(self, operator, filter_expr='', alias_list=None):
         curr_table = self.table_name
         expr_join = ''
+        if alias_list is None:
+            alias_list = []
         if operator.upper() == 'RETURN':
-            alias_list = self.alias
+            alias_list.append(self.alias)
             for field in self.joins:
                 join = self.joins[field]
-                join_params = join.query_elements(operator)
-                alias_list += ',' + join_params['alias_list']
+                if join.alias in alias_list:
+                    continue
+                join_params = join.query_elements(operator, '', alias_list)
                 if expr_join:
                     expr_join += ', ({})'.format(self.alias)
                 expr_join += '-->({alias}:{table}){join}'.format(**join_params)
-        else:
-            alias_list = ''
         return {
             'alias': self.alias,
             'table': curr_table,
             'join': expr_join,
             'filter': filter_expr,
             'operator': operator,
-            'alias_list': alias_list
+            'alias_list': ','.join(alias_list)
         }
 
     def json_record(self, row, last=None):
