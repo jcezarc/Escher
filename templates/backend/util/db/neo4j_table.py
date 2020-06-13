@@ -14,39 +14,47 @@ class Neo4Table(DbTable):
             encrypted=False
         )
 
-    def query_elements(self, operator, filter_expr='', alias_list=None):
-        curr_table = self.table_name
+    def query_elements(self, operator, filter_expr='', suffix=''):
         expr_join = ''
-        if alias_list is None:
-            alias_list = []
+        main_table = not suffix
+        curr_alias = self.alias + suffix
+        alias_list = curr_alias
         if operator.upper() == 'RETURN':
-            alias_list.append(self.alias)
             for field in self.joins:
                 join = self.joins[field]
-                if join.alias in alias_list:
-                    continue
-                join_params = join.query_elements(operator, '', alias_list)
+                join_params = join.query_elements(
+                    operator,
+                    '',
+                    '_'+self.alias   # '_'+curr_alias
+                )
+                alias_list += ', '+join_params['alias_list']
                 if expr_join:
-                    expr_join += ', ({})'.format(self.alias)
+                    expr_join += ', ({})'.format(curr_alias)
                 expr_join += '-->({alias}:{table}){join}'.format(**join_params)
-        return {
-            'alias': self.alias,
-            'table': curr_table,
+        result = {
+            'alias': curr_alias,
+            'table': self.table_name,
             'join': expr_join,
-            'filter': filter_expr,
-            'operator': operator,
-            'alias_list': ','.join(alias_list)
+            'alias_list': alias_list
         }
+        if main_table:
+            result['filter'] = filter_expr
+            result['operator'] = operator
+        return result
 
-    def json_record(self, row, last=None):
+    def inflate(self, row, last=None, suffix=''):
         record={}
         combine = False
+        curr_alias = self.alias+suffix
         for field in self.map:
             join = self.joins.get(field)
             if join:
-                value = join.json_record(row)[0]
+                value = join.inflate(
+                    row, 
+                    suffix='_'+self.alias
+                )[0]
             else:
-                value = row[self.alias].get(field)
+                value = row[curr_alias].get(field)
             if combine:
                 result = last[field]
                 if not isinstance(result, list):
@@ -70,13 +78,13 @@ class Neo4Table(DbTable):
         result = []
         record = None
         for row in dataset:
-            record, to_update = self.json_record(row, record)
+            record, to_update = self.inflate(row, record)
             if to_update:
                 result[-1] = record
-            elif len(result) == limit:
-                break
             else:
                 result.append(record)
+                if len(result) == limit:
+                    break
         # -----------------------------------------
         return result
 
