@@ -52,7 +52,6 @@ export class %table%ListComponent implements OnInit {
   }
 
   save(item: %table%Model){
-    %saveImage%
     %save_nesteds%
     this.%table%Svc.save%table%(item)
     this.items.push(item)

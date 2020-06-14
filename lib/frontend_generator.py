@@ -109,7 +109,7 @@ class FrontendGenerator(BaseGenerator):
         table = super().extract_table_info(obj)
         pk_field = obj['pk_field']
         angular_data = obj.get('Angular', {})
-        self.source['saveImage'] = ''
+        self.source['changeImage'] = ''
         if 'image' in angular_data:
             image_field = angular_data['image']
             self.source['img_tag'] = """
@@ -121,8 +121,16 @@ class FrontendGenerator(BaseGenerator):
                 table
             )
             if '.' not in image_field:
-                self.source['saveImage'] = "item."+image_field+" = `assets/img/"\
-                    + table + "/${(<string>item." + pk_field + ")}.jpg`"
+                code_block = ['{', '{newValue}', '}']
+                self.source['changeImage'] = f"""
+        this.{table}Form.get('{pk_field}').valueChanges.subscribe(
+        newValue => {code_block[0]}
+            this.{table}Form.get('{image_field}').setValue(
+            `assets/img/{table}/${code_block[1]}.jpg`
+            )
+        {code_block[-1]}
+        )
+                """
         else:
             self.source['img_tag'] = ''
         for key in ANGULAR_KEYS:

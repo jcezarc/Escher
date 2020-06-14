@@ -25,6 +25,6 @@ export class New%table%Component implements OnInit {
 %new-field_list%
 %new-nested%
     })
+%changeImage%
   }
-
 }
