@@ -160,7 +160,8 @@ class JSonLinter:
             if not self.required_fields(angular_data, ANGULAR_KEYS, ignore='image'):
                 return ERR_REQ_FIELD_ANG
             self.field_list = table['field_list']
-            if not isinstance(self.field_list, dict):
+            if not isinstance(self.field_list, dict)\
+            or not self.field_list:
                 return ERR_FLIST_NO_DICT
             if not self.is_valid_types():
                 return ERR_UNKNOWN_FTYPE
@@ -170,7 +171,7 @@ class JSonLinter:
                     return ERR_NES_ALRD_EXST
             d = angular_data
             ng = {i:d[i] for i in d if i != 'label-colors'}
-            if self.incompatible_fields(ng, 'value_in', nested):
+            if self.incompatible_fields(ng, 'value_in', nested or {}):
                 return ERR_ANG_NOT_IN_FL
             pk_field = table['pk_field']
             if self.incompatible_fields([pk_field], 'key_in'):
@@ -214,4 +215,6 @@ class JSonLinter:
             result += ')'
         if self.error_code in [ERR_DBTYPE_UPARAM, ERR_DBTYPE_PVALUE]:
             result += '"{}"'.format(self.curr_field)
+        if self.error_code == ERR_UNKNOWN_FTYPE:
+            result += f'\n\t valid types are:{FIELD_TYPES}'
         return result
