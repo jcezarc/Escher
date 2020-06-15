@@ -134,10 +134,10 @@ class SqlTable(DbTable):
     def contained_clause(value):
         return "LIKE '%" + value + "%'"
 
-    def get_conditions(self, values):
+    def get_conditions(self, values, only_pk=True):
         if not values:
             return ''
-        super().get_conditions(values)
+        super().get_conditions(values, only_pk)
         return ' AND '.join(self.conditions)
 
     def find_one(self, values):

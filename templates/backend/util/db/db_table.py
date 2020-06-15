@@ -103,18 +103,25 @@ class DbTable:
                 )
             )
 
-    def get_conditions(self, values):
+    def get_conditions(self, values, only_pk=False):
         self.conditions = []
         if not values:
             return None
         if isinstance(values, dict):
-            for field in values:
-                value = values[field]
-                if isinstance(value, list):
-                    value = value[0]
-                self.add_condition(field, value)
-        else:
-            if not isinstance(values, list):
-                values = [values]
-            for field, value in zip(self.pk_fields, values):
-                self.add_condition(field, value)
+            if only_pk:
+                result = []
+                for field in self.pk_fields:
+                    value = values.get(field, '')
+                    result.append(value)
+                values = result
+            else:
+                for field in values:
+                    value = values[field]
+                    if isinstance(value, list):
+                        value = value[0]
+                    self.add_condition(field, value)
+                return
+        if not isinstance(values, list):
+            values = [values]
+        for field, value in zip(self.pk_fields, values):
+            self.add_condition(field, value)

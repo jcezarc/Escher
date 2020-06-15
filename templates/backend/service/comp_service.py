@@ -22,7 +22,10 @@ class %table%Service:
             found = self.table.find_one([%pk_field%])
         else:
             logging.info('Finding all records of %table%...')
-            found = self.table.find_all(20, self.table.get_conditions(params))
+            found = self.table.find_all(
+                20,
+                self.table.get_conditions(params, False)
+            )
         if not found:
             return resp_not_found()
         return resp_get_ok(found)
