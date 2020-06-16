@@ -28,6 +28,10 @@ export class NavigatorComponent implements OnInit {
   view(source: any[]): any[]{
     if(!source)
       return []
+    const pageCount: number = source.length / this.maxItems
+    if(this.page >= pageCount){
+      this.page = 0
+    }
     let Result: any[] = []
     const step: number = (this.page * this.maxItems)
     for (let i = step; i < source.length; i++) {      
@@ -35,7 +39,6 @@ export class NavigatorComponent implements OnInit {
       if(Result.length == this.maxItems)
         break        
     }
-    const pageCount: number = source.length / this.maxItems
     this.morePages = this.page < pageCount-1
     return Result
   }
