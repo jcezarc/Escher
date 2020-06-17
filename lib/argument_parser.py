@@ -43,7 +43,7 @@ class ArgumentParser:
             elif last_arg in ['C', 'J']:
                 self.db_type = text
             else:
-                self.file_name = os.path.splitext(text)[0]
+                self.file_name = os.path.splitext(param)[0]
                 if text[0] == '-':
                     self.funcs = [self.show_error_arg]
                     return
