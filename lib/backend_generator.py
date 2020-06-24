@@ -15,7 +15,6 @@ class BackendGenerator(BaseGenerator):
         )
         self.db_config = db_config
         self.dao_info = aux
-        self.is_sql = aux['dao_class'] == 'SqlTable'
 
     def ignore_list(self):
         db_list = ['dynamo_table.py', 'mongo_table.py', 'neo4j_table.py', 'sql_table.py']
@@ -46,7 +45,8 @@ class BackendGenerator(BaseGenerator):
                     'config_routes': 'config_routes.py',
                     'imports': 'imports.py',
                     'swagger_details': 'swagger_details.py',
-                })
+                }),
+                'requirements.txt'
             ],
             'model': [
                 ('comp_model.py',{
@@ -85,6 +85,7 @@ class BackendGenerator(BaseGenerator):
     def extract_table_info(self, obj):
         IMP_DAO = 'import_dao_class'
         DAO_CLS = 'dao_class'
+        REQ_TXT = 'requirements'
         result = super().extract_table_info(obj)
         pk_field = obj['pk_field']
         field_list = obj['field_list']
@@ -98,6 +99,8 @@ class BackendGenerator(BaseGenerator):
         self.source['extra'] = formated_json(self.db_config)
         self.source[IMP_DAO] = self.dao_info[IMP_DAO]
         self.source[DAO_CLS] = self.dao_info[DAO_CLS]
+        req = self.dao_info[REQ_TXT]
+        self.source[REQ_TXT] = req.replace(' ', '')
         self.source.setdefault('nested', {})
         return result
 
@@ -105,7 +108,3 @@ class BackendGenerator(BaseGenerator):
         if path == '' and file_name == 'app.py':
             return True
         return False
-
-    def init_source(self):
-        super().init_source()
-        self.source['is_SQL'] = str(self.is_sql)
