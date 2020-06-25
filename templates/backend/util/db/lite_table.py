@@ -13,9 +13,6 @@ class LiteTable(FormatTable):
 
     def execute(self, command, need_commit):
         cursor = self.connection.cursor()
-        print('-'*100)
-        print(command)
-        print('-'*100)
         cursor.execute(command)
         if need_commit:
             self.connection.commit()

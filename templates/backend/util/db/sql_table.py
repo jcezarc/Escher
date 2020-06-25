@@ -59,6 +59,28 @@ class SqlTable(FormatTable):
             )
         return fields, curr_table, expr_join
 
+    def inflate(self, value, record, prefix):
+        search = prefix.pop(0)
+        key = search
+        if prefix:
+            for field in self.joins:
+                join = self.joins[field]
+                if join.alias == search:
+                    result = record.get(field)
+                    if not isinstance(result, dict) :
+                        result = {}
+                    key, value = join.inflate(
+                        value,
+                        result,
+                        prefix
+                    )
+                    result[key] = value
+                    key = field
+                    value = result
+                    break
+        return key, value
+
+
     def find_all(self, limit=0, filter_expr=''):
         fields, curr_table, expr_join = self.query_elements()
         command = 'SELECT {} \nFROM {} {}'.format(
