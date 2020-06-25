@@ -62,10 +62,12 @@
             }
         }
     ],
-    "db_type": "Neo4J",
+    "db_type": "dynamoDB",
     "db_config": {
-        "user": "neo4j",
-        "host": "localhost",
-        "password": "1234"
+        "service_name": "dynamodb",
+        "region_name": "us-west-2",
+        "endpoint_url": "http://localhost:8000",
+        "aws_access_key_id": "",
+        "aws_secret_access_key": ""
     }
 }

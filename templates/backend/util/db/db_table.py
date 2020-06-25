@@ -16,6 +16,10 @@ class DbTable:
             cls.existing[table_name] = obj
         return obj
 
+    def pk_numeric(self):
+        field = self.pk_fields[0]
+        return self.map[field] == "N"
+
     def config(self, table_name, schema, params):
         self.table_name = table_name
         self.alias = self.table_name[:3].lower()
@@ -27,18 +31,19 @@ class DbTable:
         self.conditions = []
         for field_name in field_defs:
             field = field_defs[field_name]
-            is_integer = isinstance(field, Integer)
-            is_float = isinstance(field, Float)
-            is_decimal = isinstance(field, Decimal)
-            if is_integer or is_float or is_decimal:
+            is_primary_key = field.metadata.get('primary_key')
+            field_type = field.__class__.__name__
+            is_number = field_type in ['Integer','Float', 'Decimal']
+            if isinstance(field, Nested):
+                self.add_join(field_name, field.nested, params)
+                join = self.joins[field_name]
+                is_number = join.pk_numeric()
+            elif is_primary_key:
+                self.pk_fields.append(field_name)
+            if is_number:
                 self.map[field_name] = "N"
             else:
                 self.map[field_name] = "S"
-            is_primary_key = field.metadata.get('primary_key')
-            if isinstance(field, Nested):
-                self.add_join(field_name, field.nested, params)
-            elif is_primary_key:
-                self.pk_fields.append(field_name)
 
     def default_values(self):
         return json.loads(self.validator.dumps(''))
