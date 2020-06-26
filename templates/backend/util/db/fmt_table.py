@@ -52,8 +52,30 @@ class FormatTable(DbTable):
             return value[key]
         return value
 
-    @staticmethod
-    def contained_clause(value):
+    def inflate(self, value, record, prefix):
+        search = prefix.pop(0)
+        key = search
+        if prefix:
+            for field in self.joins:
+                join = self.joins[field]
+                if join.alias == search:
+                    result = record.get(field)
+                    if not isinstance(result, dict) :
+                        result = {}
+                    key, value = join.inflate(
+                        value,
+                        result,
+                        prefix
+                    )
+                    result[key] = value
+                    key = field
+                    value = result
+                    break
+        return key, value
+
+    def contained_clause(self, field, value):
+        if field in self.required_fields:
+            return super().contained_clause(field, value)
         return "LIKE '%" + value + "%'"
 
     def get_conditions(self, values, only_pk=True):

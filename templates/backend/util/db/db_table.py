@@ -28,9 +28,12 @@ class DbTable:
         field_defs = self.validator.declared_fields
         self.pk_fields = []
         self.map = {}
+        self.required_fields = []
         self.conditions = []
         for field_name in field_defs:
             field = field_defs[field_name]
+            if field.required:
+                self.required_fields.append(field_name)
             is_primary_key = field.metadata.get('primary_key')
             field_type = field.__class__.__name__
             is_number = field_type in ['Integer','Float', 'Decimal']
@@ -88,8 +91,7 @@ class DbTable:
     def find_one(self, values):
         raise NotImplementedError('Method "find_one" not implemented!')
 
-    @staticmethod
-    def contained_clause(value):
+    def contained_clause(self, field, value):
         return "='" + value + "'"
 
     def add_condition(self, field, value):
@@ -97,7 +99,7 @@ class DbTable:
             self.conditions.append(
                 "{} {}".format(
                     field,
-                    self.contained_clause(value)
+                    self.contained_clause(field, value)
                 )
             )
         else:

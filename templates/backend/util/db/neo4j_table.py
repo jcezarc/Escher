@@ -10,7 +10,7 @@ class Neo4Table(DbTable):
         uri = "bolt://{host}:{port}/neo4j"
         self.driver = GraphDatabase.driver(
             uri.format(**params),
-            auth=(params['user'], params['password']),
+            auth=(params['pessoa'], params['password']),
             encrypted=False
         )
 
@@ -96,8 +96,7 @@ class Neo4Table(DbTable):
             found = found[0]
         return found
 
-    @staticmethod
-    def contained_clause(value):
+    def contained_clause(self, field, value):
         return "CONTAINS '" + value + "'"
 
     def get_conditions(self, values):
