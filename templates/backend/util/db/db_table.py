@@ -29,6 +29,9 @@ class DbTable:
         self.pk_fields = []
         self.map = {}
         self.required_fields = []
+        self.new_condition_event = {
+            # field : <<callback function>>
+        }
         self.conditions = []
         for field_name in field_defs:
             field = field_defs[field_name]
@@ -95,20 +98,20 @@ class DbTable:
         return "='" + value + "'"
 
     def add_condition(self, field, value):
-        if self.map[field] == "S":
-            self.conditions.append(
-                "{} {}".format(
-                    field,
-                    self.contained_clause(field, value)
-                )
+        func = self.new_condition_event.get(field)
+        if func:
+            result = func(value)
+        elif self.map.get(field) == "S":
+            result = "{} {}".format(
+                field,
+                self.contained_clause(field, value)
             )
         else:
-            self.conditions.append(
-                '{}={}'.format(
-                    field,
-                    value
-                )
+            result = '{}={}'.format(
+                field,
+                value
             )
+        self.conditions.append(result)
 
     def get_conditions(self, values, only_pk=False):
         self.conditions = []
