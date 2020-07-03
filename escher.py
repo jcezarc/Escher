@@ -26,7 +26,7 @@ def main():
     if parser.funcs:
         parser.exec_funcs()
         return
-    linter = JSonLinter(parser.file_name)
+    linter = JSonLinter(parser.file_name, parser.frontend)
     linter.analyze()
     if linter.error_code > 0:
         print(linter.error_message())

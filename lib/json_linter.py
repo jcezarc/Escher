@@ -49,7 +49,7 @@ LINTER_ERRRORS = {
 }
 
 class JSonLinter:
-    def __init__(self, file_name):
+    def __init__(self, file_name, with_frontend=True):
         self.file_name = file_name
         try:
             self.load_json()
@@ -62,6 +62,7 @@ class JSonLinter:
         self.summary = {}
         self.curr_table = ''
         self.curr_field = ''
+        self.has_frontend = with_frontend
 
     def load_json(self):
         with open(self.file_name+'.json', 'r') as f:
@@ -145,6 +146,15 @@ class JSonLinter:
         return 0, ""
 
     def __get_error(self):
+        def angular_data(table):
+            ng = table.get('Angular')
+            if not isinstance(ng, dict):
+                return ERR_INCORRECT_ANG
+            if not self.required_fields(ng, ANGULAR_KEYS, ignore='image'):
+                return ERR_REQ_FIELD_ANG
+            ng = {i:d[i] for i in ng if i != 'label-colors'}
+            if self.incompatible_fields(ng, 'value_in', nested or {}):
+                return ERR_ANG_NOT_IN_FL
         tables = self.data.get('tables')
         if not tables:
             return ERR_NO_TABLE_LIST
@@ -154,11 +164,10 @@ class JSonLinter:
                 return ERR_TABLE_ELEMENT
             if not self.required_fields(table, JSON_KEYS, ignore='nested'):
                 return ERR_REQ_FIELD_LST
-            angular_data = table.get('Angular')
-            if not isinstance(angular_data, dict):
-                return ERR_INCORRECT_ANG
-            if not self.required_fields(angular_data, ANGULAR_KEYS, ignore='image'):
-                return ERR_REQ_FIELD_ANG
+            if self.has_frontend:
+                result = angular_data(table)
+                if result:
+                    return result
             self.field_list = table['field_list']
             if not isinstance(self.field_list, dict)\
             or not self.field_list:
@@ -169,17 +178,13 @@ class JSonLinter:
             if isinstance(nested, dict):
                 if self.incompatible_fields(nested, 'key_not_in'):
                     return ERR_NES_ALRD_EXST
-            d = angular_data
-            ng = {i:d[i] for i in d if i != 'label-colors'}
-            if self.incompatible_fields(ng, 'value_in', nested or {}):
-                return ERR_ANG_NOT_IN_FL
             pk_field = table['pk_field']
             if self.incompatible_fields([pk_field], 'key_in'):
                 return ERR_PKF_NOT_IN_FL
             self.summary[self.curr_table] = {
                 'field_list': self.field_list,
                 'nested': nested,
-                'Angular': angular_data
+                'Angular': table.get('Angular')
             }
         nested_error = self.check_nesteds()
         if nested_error:
