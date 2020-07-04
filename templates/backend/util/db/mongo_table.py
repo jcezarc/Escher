@@ -44,8 +44,8 @@ class MongoTable(DbTable):
             self.get_conditions(values)
         )
 
-    def get_conditions(self, values):
-        super().get_conditions(values)
+    def get_conditions(self, values, only_pk=False):
+        super().get_conditions(values, only_pk)
         return dict(self.conditions)
 
     def add_condition(self, field, value):

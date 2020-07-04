@@ -126,8 +126,8 @@ class DynamoTable(DbTable):
             Key(field).eq(value)
         )
 
-    def get_conditions(self, values):
-        super().get_conditions(values)
+    def get_conditions(self, values, only_pk=False):
+        super().get_conditions(values, only_pk)
         result = None
         for condition in self.conditions:
             if result:
