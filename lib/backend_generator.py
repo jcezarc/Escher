@@ -17,9 +17,18 @@ class BackendGenerator(BaseGenerator):
         self.dao_info = aux
 
     def ignore_list(self):
-        db_list = ['dynamo_table.py', 'mongo_table.py', 'neo4j_table.py', 'sql_table.py']
+        db_list = [
+            'dynamo_table.py',
+            'mongo_table.py',
+            'neo4j_table.py',
+            'sql_table.py',
+            'lite_table.py'
+        ]
         dao = self.dao_info['import_dao_class']+'.py'
-        return [i for i in db_list if i != dao]
+        result = [i for i in db_list if i != dao]
+        if dao not in db_list[-2:]:
+            result.append('fmt_table.py')
+        return result
 
     def on_create_dir(self, target):
         init_file = os.path.join(
@@ -57,7 +66,8 @@ class BackendGenerator(BaseGenerator):
             ],
             'resource':[
                 'all_comp.py',
-                'comp_by_id.py'
+                'comp_by_id.py',
+                'user_controller.py'
             ],
             'service': [
                 'comp_service.py',

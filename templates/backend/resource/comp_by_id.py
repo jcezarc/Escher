@@ -1,7 +1,12 @@
 from flask_restful import Resource
+from flask_jwt import 
+
 from service.%table%_service import %table%Service
 
 class %table%ById(Resource):
+
+    decorators=[jwt_required()]
+
     def get(self, %pk_field%):
         """
         Search in  %table% by the filed %pk_field%
