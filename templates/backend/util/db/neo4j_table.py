@@ -150,7 +150,7 @@ class Neo4Table(DbTable):
 
     def delete(self, values):
         params = self.query_elements(
-            'DETACH DELETE '+self.alias, 
+            'DETACH DELETE', 
             self.get_conditions(values)
         )
         command = CYPHER_QUERY.format(**params)
