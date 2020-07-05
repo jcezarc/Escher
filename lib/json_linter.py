@@ -146,13 +146,14 @@ class JSonLinter:
         return 0, ""
 
     def __get_error(self):
+        nested = None
         def angular_data(table):
             ng = table.get('Angular')
             if not isinstance(ng, dict):
                 return ERR_INCORRECT_ANG
             if not self.required_fields(ng, ANGULAR_KEYS, ignore='image'):
                 return ERR_REQ_FIELD_ANG
-            ng = {i:d[i] for i in ng if i != 'label-colors'}
+            ng = {i:ng[i] for i in ng if i != 'label-colors'}
             if self.incompatible_fields(ng, 'value_in', nested or {}):
                 return ERR_ANG_NOT_IN_FL
         tables = self.data.get('tables')
@@ -164,10 +165,6 @@ class JSonLinter:
                 return ERR_TABLE_ELEMENT
             if not self.required_fields(table, JSON_KEYS, ignore='nested'):
                 return ERR_REQ_FIELD_LST
-            if self.has_frontend:
-                result = angular_data(table)
-                if result:
-                    return result
             self.field_list = table['field_list']
             if not isinstance(self.field_list, dict)\
             or not self.field_list:
@@ -178,6 +175,10 @@ class JSonLinter:
             if isinstance(nested, dict):
                 if self.incompatible_fields(nested, 'key_not_in'):
                     return ERR_NES_ALRD_EXST
+            if self.has_frontend:
+                result = angular_data(table)
+                if result:
+                    return result
             pk_field = table['pk_field']
             if self.incompatible_fields([pk_field], 'key_in'):
                 return ERR_PKF_NOT_IN_FL
