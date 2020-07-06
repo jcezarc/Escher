@@ -27,14 +27,14 @@ export class AuthService{
     }
 
     handShake(){
-        const perfil = {
+        const profile = {
             user: 'development',
             password: '123'
         }
         const headers: Headers = this.getHeaders()
         this.http.post(
             HandShakeURL,
-            JSON.stringify(perfil),
+            JSON.stringify(profile),
             new RequestOptions({headers:headers})
         ).subscribe(
             resp => {
