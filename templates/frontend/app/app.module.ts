@@ -9,6 +9,7 @@ import { ROUTES } from './app.routes';
 import { NavigatorComponent } from './shared/navigator/navigator.component';
 import { SearchBarComponent } from './shared/search-bar/search-bar.component';
 import { DeleteButtonComponent } from './shared/delete-button/delete-button.component';
+import { AuthService } from './shared/auth-service'
 import { HeaderComponent } from './header/header.component'
 
 @NgModule({
@@ -27,6 +28,7 @@ import { HeaderComponent } from './header/header.component'
     RouterModule.forRoot(ROUTES)
   ],
   providers: [
+    AuthService,
 %Service_List%
   ],
   bootstrap: [AppComponent]

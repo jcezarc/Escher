@@ -2,9 +2,10 @@ import { Http, RequestOptions, Headers, Response } from "@angular/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "../../../node_modules/rxjs";
 import { %table%Model } from "./%table%-model";
-import { RespJsonFlask } from "../app.api";
+import { RespJsonFlask, BASE_PATH_SERVER } from "../app.api";
+import { AuthService } from '../shared/auth-service'
 
-const %table%_API = 'http://localhost:5000/%API_name%/%table%'
+const %table%_API = `${BASE_PATH_SERVER}/%API_name%/%table%`
 
 
 @Injectable()
@@ -26,18 +27,21 @@ export class %table%Service{
     all%table%s():Observable<Response>{
         return this.http.get(
             %table%_API
+            ,new RequestOptions({headers: AuthService.header})
         )
     }
 
     %table%sByTitle(text: string):Observable<Response>{
         return this.http.get(
-            `${%table%_API}?%title%=${text}`,
+            `${%table%_API}?%title%=${text}`
+            ,new RequestOptions({headers: AuthService.header})
         )
     }
 
     delete(%pk_field%: string): void{
         this.http.delete(
             `${%table%_API}/${%pk_field%}`
+            ,new RequestOptions({headers: AuthService.header})
         ).subscribe(
             resp => {
                 const obj:RespJsonFlask = (<RespJsonFlask>resp.json())
@@ -48,12 +52,10 @@ export class %table%Service{
     }
 
     save%table%(newItem: %table%Model): void{
-        const headers: Headers = new Headers()
-        headers.append('Content-Type','application/json')
         this.http.post(
             %table%_API,
-            JSON.stringify(newItem),
-            new RequestOptions({headers:headers})
+            JSON.stringify(newItem)
+            ,new RequestOptions({headers: AuthService.header})
         ).subscribe(
             resp => {
                 const obj:RespJsonFlask = (<RespJsonFlask>resp.json())

@@ -75,8 +75,8 @@ def get_api():
 def health():
     return 'OK', 200
 
-@APP.route('/login', methods=['POST'])
-def login():
+@APP.route('/handshake', methods=['POST'])
+def handshake():
     user = request.json.get('user')
     password = request.json.get('password')
     found, user_id = valid_user(user, password)
