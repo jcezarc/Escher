@@ -6,9 +6,6 @@ class FakeTable(DbTable):
         super().config(table_name, schema, params)
         self.internal_data = []
 
-    def add_join(self, name, schema, params):
-        pass
-
     def insert(self, json):
         errors = self.validator.validate(json)
         if errors:

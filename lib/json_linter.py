@@ -146,8 +146,7 @@ class JSonLinter:
         return 0, ""
 
     def __get_error(self):
-        nested = None
-        def angular_data(table):
+        def angular_data(table, nested):
             ng = table.get('Angular')
             if not isinstance(ng, dict):
                 return ERR_INCORRECT_ANG
@@ -176,7 +175,7 @@ class JSonLinter:
                 if self.incompatible_fields(nested, 'key_not_in'):
                     return ERR_NES_ALRD_EXST
             if self.has_frontend:
-                result = angular_data(table)
+                result = angular_data(table, nested)
                 if result:
                     return result
             pk_field = table['pk_field']

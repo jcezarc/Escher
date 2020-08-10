@@ -43,6 +43,9 @@ class Neo4Table(DbTable):
         return result
 
     def inflate(self, row, last=None, suffix=''):
+        # 
+        # [To-Do]  No banco de dados "Sale", a consulta de vários itens aninhados resulta em arrays duplicados...!!
+        #
         record={}
         combine = False
         curr_alias = self.alias+suffix
@@ -121,6 +124,10 @@ class Neo4Table(DbTable):
                 continue
             join = self.joins[field]
             nodes += join.get_node(json_data[field])
+            #
+            # [To-Do]  relation_name = callback(...)
+            #          ex.: callback(table1, table2)
+            #
             expr_join += 'MERGE ({})-[: {}_{}]->({})\n'.format(
                 self.alias,
                 self.alias, join.alias,

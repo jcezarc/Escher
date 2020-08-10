@@ -102,7 +102,7 @@ class SqlTable(FormatTable):
             record = {}
             for item in row.items():
                 key, value = self.inflate(
-                    item[1],
+                    str(item[1]),
                     record,
                     item[0].split('__')
                 )
