@@ -22,8 +22,11 @@ class SqlTable(FormatTable):
         command = self.get_command(
             json_data,
             is_insert=True,
-            use_quotes=True
+            use_quotes=False
         )
+        print('-'*100)
+        print(command)
+        print('-'*100)
         self.session.execute(command)
         self.session.commit()
         return None
@@ -32,31 +35,38 @@ class SqlTable(FormatTable):
         command = self.get_command(
             json_data,
             is_insert=False,
-            use_quotes=True
+            use_quotes=False
         )
+        print('-'*100)
+        print(command)
+        print('-'*100)
         self.session.execute(command)
         self.session.commit()
 
-    def query_elements(self, prefix=''):
+    def query_elements(self, prefix='', source=''):
         a = self.alias
-        fields = [f'{a}."{f}" as "{prefix}{f}"' for f in self.map]
-        curr_table = '"{}" {}'.format(self.table_name, self.alias)
+        fields = [f'{a}.{f} as {prefix}{f}' for f in self.map]
+        curr_table = '{} {}'.format(self.table_name, self.alias)
         expr_join = ''
         for field in self.joins:
             join = self.joins[field]
-            join_fields, join_table, sub_expr = join.query_elements(
-                prefix+join.alias+'__'
+            join_fields, join_table, join_left = join.query_elements(
+                prefix+join.alias+'__', expr_join
             )
             join_primary_key = join.alias + '.' + join.pk_fields[0]
             if join_primary_key in join_fields:
                 join_fields.remove(join_primary_key)
-            fields += join_fields
-            expr_join += '\n\tLEFT JOIN {} ON ({}.{} = {}){}'.format(
-                join_table,
+            header = 'LEFT JOIN {} '.format(join_table)
+            if header in source or header in expr_join:
+                continue
+            sub_expr = '\n\t{}ON ({}.{} = {}){}'.format(
+                header,
                 self.alias, field,
                 join_primary_key,
-                sub_expr
+                join_left
             )
+            fields += join_fields
+            expr_join += sub_expr
         return fields, curr_table, expr_join
 
     def inflate(self, value, record, prefix):
@@ -91,11 +101,11 @@ class SqlTable(FormatTable):
         if filter_expr:
             has_where = 'WHERE' in filter_expr.upper()
             if not has_where:
-                filter_expr = 'WHERE {}.{}'.format(
-                    self.alias,
-                    filter_expr
-                )
+                filter_expr = 'WHERE ' + filter_expr
             command += '\n' + filter_expr
+        print('-'*100)
+        print(command)
+        print('-'*100)
         dataset = self.session.execute(command)
         result = []
         for row in dataset.fetchall():
@@ -121,9 +131,12 @@ class SqlTable(FormatTable):
         return found
 
     def delete(self, values):
-        command = 'DELETE FROM "{}" WHERE {}'.format(
+        command = 'DELETE FROM {} WHERE {}'.format(
             self.table_name,
             self.get_conditions(values)
         )
+        print('-'*100)
+        print(command)
+        print('-'*100)
         self.session.execute(command)
         self.session.commit()

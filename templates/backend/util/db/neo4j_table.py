@@ -58,7 +58,7 @@ class Neo4Table(DbTable):
                 )[0]
             else:
                 value = row[curr_alias].get(field)
-            if combine:
+            if combine and join:
                 result = last[field]
                 if not isinstance(result, list):
                     result = [result]
@@ -81,7 +81,8 @@ class Neo4Table(DbTable):
         result = []
         record = None
         for row in dataset:
-            record, to_update = self.inflate(row, record)
+            # record, to_update = self.inflate(row, record)
+            record = row
             if to_update:
                 result[-1] = record
             else:

@@ -101,6 +101,7 @@ class DbTable:
         func = self.new_condition_event.get(field)
         if func:
             result = func(value)
+            if not result: return
         elif self.map.get(field) == "S":
             result = "{} {}".format(
                 field,

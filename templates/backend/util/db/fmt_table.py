@@ -1,6 +1,9 @@
 from util.db.db_table import DbTable, SQL_INSERT_MODE
 
 class FormatTable(DbTable):
+    def config(self, table_name, schema, params):
+        super().config(table_name, schema, params)
+        self.last_condition = ''
 
     def insert(self, json_data):
         sample = json_data.copy()
@@ -42,7 +45,7 @@ class FormatTable(DbTable):
             return 'UPDATE {} SET {} WHERE {}'.format(
                 table_name,
                 ','.join(field_list),
-                self.get_conditions(json_data)
+                self.get_conditions(json_data, False)
             )
 
     def flatten(self, key, value):
@@ -82,4 +85,5 @@ class FormatTable(DbTable):
         if not values:
             return ''
         super().get_conditions(values, only_pk)
-        return ' AND '.join(self.conditions)
+        self.last_condition = ' AND '.join(self.conditions)
+        return self.last_condition
