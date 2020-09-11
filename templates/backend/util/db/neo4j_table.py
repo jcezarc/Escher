@@ -43,9 +43,6 @@ class Neo4Table(DbTable):
         return result
 
     def inflate(self, row, last=None, suffix=''):
-        # 
-        # [To-Do]  No banco de dados "Sale", a consulta de vários itens aninhados resulta em arrays duplicados...!!
-        #
         record={}
         combine = False
         curr_alias = self.alias+suffix
@@ -66,7 +63,7 @@ class Neo4Table(DbTable):
                     result.append(value)
                     value = result
             elif last and field in self.pk_fields:
-                combine = last[field] == value
+                combine = last.get(field) == value
             record[field] = value
         return record, combine
 
@@ -81,8 +78,7 @@ class Neo4Table(DbTable):
         result = []
         record = None
         for row in dataset:
-            # record, to_update = self.inflate(row, record)
-            record = row
+            record, to_update = self.inflate(row, record)
             if to_update:
                 result[-1] = record
             else:
