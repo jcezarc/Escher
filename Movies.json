@@ -62,12 +62,14 @@
             }
         }
     ],
-    "db_type": "dynamoDB",
+    "db_type": "postgres",
     "db_config": {
-        "service_name": "dynamodb",
-        "region_name": "us-west-2",
-        "endpoint_url": "http://localhost:8000",
-        "aws_access_key_id": "000",
-        "aws_secret_access_key": "000"
+        "dialect": "postgresql",
+        "driver": "psycopg2",
+        "username": "postgres",
+        "password": "123",
+        "host": "localhost",
+        "port": "5432",
+        "database": "myDB"
     }
 }

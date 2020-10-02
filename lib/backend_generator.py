@@ -1,5 +1,6 @@
 import os
 from lib.base_generator import BaseGenerator
+from lib.create_table_generator import CreateTableGenerator
 from lib.db_defaults import default_params, formated_json
 
 class BackendGenerator(BaseGenerator):
@@ -13,6 +14,7 @@ class BackendGenerator(BaseGenerator):
         )
         self.db_config = db_config
         self.dao_info = aux
+        self.linter = linter
 
     def ignore_list(self):
         db_list = [
@@ -90,6 +92,14 @@ class BackendGenerator(BaseGenerator):
             return 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
         return ''
 
+    def sql_script(self, value):
+        if value in ['SqlTable', 'LiteTable']:
+            generator = CreateTableGenerator(
+                self.linter
+            )
+            generator.run()
+        return value
+
     def extract_table_info(self, obj):
         IMP_DAO = 'import_dao_class'
         DAO_CLS = 'dao_class'
@@ -104,11 +114,18 @@ class BackendGenerator(BaseGenerator):
             'date': '"2020-05-24"',
             'float': '0.00'
         }[type_of_pk]
-        self.source['extra'] = formated_json(self.db_config)
-        self.source[IMP_DAO] = self.dao_info[IMP_DAO]
-        self.source[DAO_CLS] = self.dao_info[DAO_CLS]
-        req = self.dao_info[REQ_TXT]
-        self.source[REQ_TXT] = req.replace(' ', '')
+        events = {
+            IMP_DAO: lambda x: x,
+            DAO_CLS: lambda x: self.sql_script(x),
+            REQ_TXT: lambda x: x.replace(' ', ''),
+        }
+        for key, func in events.items():
+            self.source[key] = func(
+                self.dao_info[key]
+            )
+        self.source['extra'] = formated_json(
+            self.db_config
+        )
         self.source.setdefault('nested', {})
         return result
 

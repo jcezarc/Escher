@@ -104,6 +104,8 @@ class BaseGenerator:
         pass
 
     def copy_folder(self, folder):
+        if not folder:
+            return
         src = os.path.join(self.root_dir(), folder)
         dst = os.path.join(
             self.api_name,
@@ -198,8 +200,7 @@ class BaseGenerator:
         return obj['table']
 
     def unpack(self):
-        for file_name in self.bundle:
-            params = self.bundle[file_name]
+        for file_name, params in self.bundle.items():
             path = params.pop('path')
             self.init_source()
             self.source.update(params)
