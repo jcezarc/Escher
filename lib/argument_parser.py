@@ -5,8 +5,8 @@ from lib.version import CURR_VERSION
 from lib.key_names import JSON_SAMPLE
 
 class ArgumentParser:
-    def __init__(self, param_list):
-        self.param_list = param_list
+    def __init__(self, params):
+        self.param_list = [p for p in params if p != params[0]]
         self.frontend = True
         self.backend = True
         self.funcs = []
@@ -16,11 +16,7 @@ class ArgumentParser:
 
     def __eval(self):
         last_arg = ''
-        is_first = True
         for param in self.param_list:
-            if is_first:
-                is_first = False #-- sys.argv[0] == Escher.py
-                continue
             text = param.lower()
             if text in ['-h', '--help']:
                 self.funcs.append(self.show_help)

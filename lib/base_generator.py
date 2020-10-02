@@ -72,8 +72,7 @@ class BaseGenerator:
         with open(origin, 'r') as f:
             text = f.read()
             f.close()
-        for key in self.source:
-            value = self.source[key]
+        for key, value in self.source.items():
             if isinstance(value, dict):
                 text = self.check_fields(
                     key,

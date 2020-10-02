@@ -10,7 +10,7 @@ class %table%ById(Resource):
     @jwt_required
     def get(self, %pk_field%):
         """
-        Search in  %table% by the filed %pk_field%
+        Search in  %table% by the field %pk_field%
 
         #Read
         """

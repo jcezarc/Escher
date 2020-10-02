@@ -17,15 +17,15 @@ class %table%Service:
             self.table = get_table(%table%Model)
 
     def find(self, params, %pk_field%=None):
-        if %pk_field%:
-            logging.info(f'Finding "{%pk_field%}" in %table% ...')
-            found = self.table.find_one([%pk_field%])
-        else:
+        if %pk_field% is None:
             logging.info('Finding all records of %table%...')
             found = self.table.find_all(
                 20,
                 self.table.get_conditions(params, False)
             )
+        else:
+            logging.info(f'Finding "{%pk_field%}" in %table% ...')
+            found = self.table.find_one([%pk_field%])
         if not found:
             return resp_not_found()
         return resp_get_ok(found)

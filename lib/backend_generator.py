@@ -2,8 +2,6 @@ import os
 from lib.base_generator import BaseGenerator
 from lib.db_defaults import default_params, formated_json
 
-PK_ATTRIB = 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
-
 class BackendGenerator(BaseGenerator):
 
     def __init__(self, linter):
@@ -73,7 +71,7 @@ class BackendGenerator(BaseGenerator):
                 'comp_service.py',
                 'db_connection.py'
             ],
-            'tests': ['comp_tests.py']
+            'tests': ['test_comp.py']
         }
 
     def util_folder(self):
@@ -89,7 +87,7 @@ class BackendGenerator(BaseGenerator):
     def get_field_attrib(self, field_name):
         pk_field = self.source['pk_field']
         if field_name == pk_field:
-            return PK_ATTRIB
+            return 'primary_key=True, default=PK_DEFAULT_VALUE, required=True'
         return ''
 
     def extract_table_info(self, obj):

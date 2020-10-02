@@ -17,7 +17,6 @@ class FrontendGenerator(BaseGenerator):
             'float': 'number'
         }.get(value, value)
 
-
     def template_list(self):
         return {
             'app':{

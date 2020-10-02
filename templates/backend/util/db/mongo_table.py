@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from util.db.db_table import DbTable
 from bson.json_util import dumps
 
-CON_STR = '{server}://{host_or_user}:{port_or_password}'
+CON_STR = '{server}{host_or_user}:{port_or_password}'
 
 class MongoTable(DbTable):
     conn = None
@@ -17,11 +17,25 @@ class MongoTable(DbTable):
         db = self.conn[params['database']]
         self.collection = db.get_collection(self.table_name)
 
-    def add_join(self, name, schema, params):
-        pass
+    def new_record(self, json_data):
+        found = self.find_one(json_data)
+        if not found:
+            record = {}
+            for field, value in json_data.items():
+                join = self.joins.get(field)
+                if join:
+                    value = join.new_record(value)
+                record[field] = value
+            self.collection.insert(record)
+            found = record
+        return found
 
     def insert(self, json_data):
-        self.collection.insert(json_data)
+        errors = self.validator.validate(json_data)
+        if errors:
+            return errors
+        self.new_record(json_data)
+        return None
 
     def update(self, json_data):
         self.collection.update_one(
@@ -29,15 +43,28 @@ class MongoTable(DbTable):
             {'$set': json_data}
         )
 
+    def get_node(self, record):
+        result = {}
+        for field, value in record.items():
+            if field not in self.map:
+                continue
+            result[field] = value
+        return result
+
     def find_all(self, limit=0, filter=None):
-        result =  self.collection.find(limit=limit, filter=filter)
-        return json.loads(dumps(result))
+        dataset = self.collection.find(limit=limit, filter=filter)
+        result = []
+        for record in dataset:
+            result.append(self.get_node(record))
+        return result
 
     def find_one(self, values):
-        result = self.collection.find_one(
-            self.get_conditions(values)
+        found = self.collection.find_one(
+            self.get_conditions(values, True)
         )
-        return json.loads(dumps(result))
+        if found:
+            found = self.get_node(found)
+        return found
     
     def delete(self, values):
         return self.collection.delete_one(
