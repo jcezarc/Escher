@@ -19,15 +19,15 @@ def get_jwt_options(empty=False):
         ''',
         'jwt_decorators_list': 'decorators=[jwt_required]',
         'jwt_handshake': '''
-            @APP.route('/handshake', methods=['POST'])
-            def handshake():
-                user = request.json.get('user')
-                password = request.json.get('password')
-                found, user_id = valid_user(user, password)
-                if not found:
-                    return "Invalid user", 403
-                access_token = create_access_token(identity=user_id)
-                return jsonify(access_token=access_token), 200
+@APP.route('/handshake', methods=['POST'])
+def handshake():
+    user = request.json.get('user')
+    password = request.json.get('password')
+    found, user_id = valid_user(user, password)
+    if not found:
+        return "Invalid user", 403
+    access_token = create_access_token(identity=user_id)
+    return jsonify(access_token=access_token), 200
         '''
     }
     if empty:
