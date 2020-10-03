@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
-import uuid
 from flask import Flask, Blueprint, request, jsonify
 from flask_restful import Api
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
-from flask_jwt_extended import create_access_token, JWTManager
+%jwt_import_access_token%
 from resource.user_controller import valid_user
 from util.swagger_generator import FlaskSwaggerGenerator
 %imports%
@@ -53,8 +52,7 @@ logging.basicConfig(
 
 APP = Flask(__name__)
 CORS(APP)
-APP.config['JWT_SECRET_KEY'] = str(uuid.uuid4())
-JWT = JWTManager(APP)
+%jwt_secret_key%
 config_routes(APP)
 set_swagger(APP)
 
@@ -75,15 +73,7 @@ def get_api():
 def health():
     return 'OK', 200
 
-@APP.route('/handshake', methods=['POST'])
-def handshake():
-    user = request.json.get('user')
-    password = request.json.get('password')
-    found, user_id = valid_user(user, password)
-    if not found:
-        return "Invalid user", 403
-    access_token = create_access_token(identity=user_id)
-    return jsonify(access_token=access_token), 200
+%jwt_handshake%
 
 if __name__ == '__main__':
     APP.run(debug=True)

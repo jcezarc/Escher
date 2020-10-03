@@ -1,12 +1,12 @@
 import json
 from flask_restful import Resource
 from flask import request, jsonify
-from flask_jwt_extended import jwt_required
+%import_jwt_required%
 from service.%table%_service import %table%Service
 
 class All%table%(Resource):
 
-    @jwt_required
+    %jwt_decorator%
     def get(self):
         """
         Returns all records from the table %table%
@@ -16,7 +16,7 @@ class All%table%(Resource):
         service = %table%Service()
         return service.find(request.args)
     
-    @jwt_required
+    %jwt_decorator%
     def post(self):
         """
         Write a new record in %table%
@@ -27,7 +27,7 @@ class All%table%(Resource):
         service = %table%Service()
         return service.insert(req_data)
 
-    @jwt_required
+    %jwt_decorator%
     def put(self):
         """
         Updates a record in %table%

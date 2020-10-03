@@ -16,6 +16,7 @@ class BaseGenerator:
         self.tables = self.json_info['tables']
         self.source = {}
         self.bundle = {}
+        self.options = linter.jwt
 
     def ignore_list(self):
         return []
@@ -189,7 +190,7 @@ class BaseGenerator:
         pass
 
     def init_source(self):
-        self.source = {}
+        self.source = self.options.copy()
         self.source['API_name'] = self.api_name
 
     def extract_table_info(self, obj):

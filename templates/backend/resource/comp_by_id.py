@@ -1,13 +1,13 @@
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+%import_jwt_required%
 
 from service.%table%_service import %table%Service
 
 class %table%ById(Resource):
 
-    decorators=[jwt_required]
+    %jwt_decorators_list%
 
-    @jwt_required
+    %jwt_decorator%
     def get(self, %pk_field%):
         """
         Search in  %table% by the field %pk_field%
@@ -17,7 +17,7 @@ class %table%ById(Resource):
         service = %table%Service()
         return service.find(None, %pk_field%)
 
-    @jwt_required
+    %jwt_decorator%
     def delete(self, %pk_field%):
         """
         Delete a record of %table%

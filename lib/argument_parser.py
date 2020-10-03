@@ -3,6 +3,7 @@ import json
 from lib.db_defaults import default_params, DB_TYPES, formated_json
 from lib.version import CURR_VERSION
 from lib.key_names import JSON_SAMPLE
+from lib.jwt_options import get_jwt_options
 
 class ArgumentParser:
     def __init__(self, params):
@@ -12,39 +13,43 @@ class ArgumentParser:
         self.funcs = []
         self.file_name = ''
         self.db_type = ''
+        self.jwt = get_jwt_options(empty=True)
         self.__eval()
 
     def __eval(self):
         last_arg = ''
+        def compare_option(value, expected):
+            short_version = expected[1:3]
+            if value in [expected, short_version]:
+                last_arg = short_version
+                return True
+            return False
         for param in self.param_list:
             text = param.lower()
-            if text in ['-h', '--help']:
+            if compare_option(text, '--help'):
                 self.funcs.append(self.show_help)
-                last_arg = 'H'
-            elif text in ['-f', '--frontend']:
+            elif compare_option(text, '--frontend'):
                 self.backend = False
-                last_arg = 'F'
-            elif text in ['-b', '--backend']:
+            elif compare_option(text, '--backend'):
                 self.frontend = False
-                last_arg = 'B'
-            elif text in ['-n', '--new']:
+            elif compare_option(text, '--new'):
                 self.funcs.append(self.create_empty_json)
-                last_arg = 'N'
-            elif last_arg == 'H':
+            elif compare_option(text, '--jwt'):
+                self.jwt = get_jwt_options()
+            elif last_arg == '-h':
                 if text == 'db_types':
                     self.funcs.append(self.show_all_types)
                 elif text == 'db_config':
                     self.funcs.append(self.show_db_config)
-                    last_arg = 'C'
-            elif last_arg in ['C', 'J']:
+            elif last_arg in ['C', '*']:
                 self.db_type = text
             else:
                 self.file_name = os.path.splitext(param)[0]
                 if text[0] == '-':
                     self.funcs = [self.show_error_arg]
                     return
-                last_arg = 'J'
-        if last_arg in ['F', 'B'] and not self.file_name:
+                last_arg = '*'
+        if last_arg in ['-f', '-b'] and not self.file_name:
             self.funcs = [self.show_error_file]
 
     def show_help(self):
@@ -63,6 +68,8 @@ class ArgumentParser:
                     Creates only the backend part.
             --new <JSON file> [<db_type>]
                     Produces an empty JSON file for Escher.
+            --jwt
+                Enables JWT authentication
             """.format(CURR_VERSION)
         )
 
