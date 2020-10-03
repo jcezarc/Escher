@@ -13,15 +13,16 @@ class ArgumentParser:
         self.funcs = []
         self.file_name = ''
         self.db_type = ''
+        self.last_arg = ''
         self.jwt = get_jwt_options(empty=True)
         self.__eval()
 
     def __eval(self):
-        last_arg = ''
+        self.last_arg = ''
         def compare_option(value, expected):
             short_version = expected[1:3]
             if value in [expected, short_version]:
-                last_arg = short_version
+                self.last_arg = short_version
                 return True
             return False
         for param in self.param_list:
@@ -36,20 +37,21 @@ class ArgumentParser:
                 self.funcs.append(self.create_empty_json)
             elif compare_option(text, '--jwt'):
                 self.jwt = get_jwt_options()
-            elif last_arg == '-h':
+            elif self.last_arg == '-h':
                 if text == 'db_types':
                     self.funcs.append(self.show_all_types)
                 elif text == 'db_config':
                     self.funcs.append(self.show_db_config)
-            elif last_arg in ['C', '*']:
+                    self.last_arg = text
+            elif self.last_arg in ['db_config', '*']:
                 self.db_type = text
             else:
                 self.file_name = os.path.splitext(param)[0]
                 if text[0] == '-':
                     self.funcs = [self.show_error_arg]
                     return
-                last_arg = '*'
-        if last_arg in ['-f', '-b'] and not self.file_name:
+                self.last_arg = '*'
+        if self.last_arg in ['-f', '-b'] and not self.file_name:
             self.funcs = [self.show_error_file]
 
     def show_help(self):
