@@ -84,9 +84,10 @@ DB_TYPES = {
             }
         ),
         'mysql': ({
-                "username": "",
+                "user": "",
                 "password": "",
                 "host": "localhost",
+                "database": ""
             },{
                 'import_dao_class': 'lite_table',
                 'dao_class': 'LiteTable',

@@ -1,9 +1,12 @@
 from util.db.db_table import DbTable, SQL_INSERT_MODE
 
+
 class FormatTable(DbTable):
+
     def config(self, table_name, schema, params):
         super().config(table_name, schema, params)
-        self.last_condition = ''
+        self.created = False
+        self.flat_all = lambda d: {k: self.flatten(k, v) for k,v in d.items()}
 
     def insert(self, json_data):
         sample = json_data.copy()
@@ -22,7 +25,7 @@ class FormatTable(DbTable):
         else:
             mask = '{}'
         d = json_data
-        json_data = {k: self.flatten(k, d[k]) for k in d}
+        json_data = self.flat_all(json_data)
         if is_insert:
             field_list = [mask.format(k) for k in d]
             insert_values = self.statement_columns(
@@ -45,7 +48,7 @@ class FormatTable(DbTable):
             return 'UPDATE {} SET {} WHERE {}'.format(
                 table_name,
                 ','.join(field_list),
-                self.get_conditions(json_data, False)
+                self.get_conditions(json_data, True)
             )
 
     def flatten(self, key, value):
@@ -84,6 +87,66 @@ class FormatTable(DbTable):
     def get_conditions(self, values, only_pk=True):
         if not values:
             return ''
+        if isinstance(values, dict):
+            values = self.flat_all(values)
         super().get_conditions(values, only_pk)
-        self.last_condition = ' AND '.join(self.conditions)
-        return self.last_condition
+        return ' AND '.join(
+            self.conditions
+        )
+
+    def create_table(self):
+        result = ''
+        field_list = []
+        for field_name, field_type in self.map.items():
+            field_list.append('\n\t{} {}'.format(
+                field_name, 
+                field_type
+            ))
+        for field, join in self.joins.items():
+            if not join.created:
+                result += join.create_table()
+            field_list.append(
+                '\n\tFOREIGN KEY ({}) REFERENCES {}({})'.format(
+                    field, join.table_name, join.pk_fields[0]
+                )
+            )
+        field_list.append('\n\tPRIMARY KEY({})'.format(
+            ','.join(self.pk_fields)
+        ))
+        command = 'CREATE TABLE IF NOT EXISTS {} ({}\n);\n'.format(
+            self.table_name, 
+            ','.join(field_list) 
+        )
+        self.execute(command, False)
+        self.created = True
+        result += command
+        return result
+
+    def query_elements(self, prefix='', source=''):
+        a = self.alias
+        if prefix:
+            fields = [f'{a}.{f} as {prefix}{f}' for f in self.map]
+        else:
+            fields = [f'{a}.{f}' for f in self.map]
+        curr_table = '{} {}'.format(self.table_name, self.alias)
+        expr_join = ''
+        for field in self.joins:
+            join = self.joins[field]
+            join_fields, join_table, join_left = join.query_elements(
+                prefix+join.alias+'__', expr_join
+            )
+            join_primary_key = join.alias + '.' + join.pk_fields[0]
+            if join_primary_key in join_fields:
+                join_fields.remove(join_primary_key)
+            header = 'LEFT JOIN {} '.format(join_table)
+            if header in source or header in expr_join:
+                continue
+            sub_expr = '\n\t{}ON ({}.{} = {}){}'.format(
+                header,
+                self.alias, field,
+                join_primary_key,
+                join_left
+            )
+            fields += join_fields
+            expr_join += sub_expr
+        return fields, curr_table, expr_join
